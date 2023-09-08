@@ -1,8 +1,8 @@
 import AWS from 'aws-sdk';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { SECRET_KEY } from '../config/environment';
-import { dynamoConfig } from '../utils/constants';
+import { SECRET_KEY } from '../config/environment.js';
+import { dynamoConfig } from '../utils/constants.js';
 
 // Initialize DynamoDB Document Client
 const dynamo = new AWS.DynamoDB.DocumentClient();
