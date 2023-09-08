@@ -2,6 +2,7 @@ import AWS from 'aws-sdk';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { SECRET_KEY } from '../config/environment';
+import { dynamoConfig } from '../utils/constants';
 
 // Initialize DynamoDB Document Client
 const dynamo = new AWS.DynamoDB.DocumentClient();
@@ -15,7 +16,7 @@ export const registerUser = async (event, context) => {
 
   // Store the new user in DynamoDB
   const params = {
-    TableName: 'Users',
+    TableName: dynamoConfig.tables.users,
     Item: { email, passwordHash: hashedPassword }
   };
 
@@ -32,7 +33,7 @@ export const authenticateUser = async (event, context) => {
 
   // Fetch user by email
   const params = {
-    TableName: 'nips_users',
+    TableName: dynamoConfig.tables.users,
     Key: { email }
   };
 
