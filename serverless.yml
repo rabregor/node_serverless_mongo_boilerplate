@@ -22,7 +22,19 @@ functions:
           method: post
   register:
     handler: src/handlers/authentication.registerUser
+    events:
+      - http:
+          path: register
+          method: post
   uploadFile:
     handler: src/handlers/file.uploadHandler
+    events:
+      - http:
+          path: uploadFile
+          method: post
   fetchFile:
     handler: src/handlers/file.fetchHandler
+    events:
+      - http:
+          path: fetchFile
+          method: get
