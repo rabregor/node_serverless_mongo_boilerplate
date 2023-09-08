@@ -1,0 +1,16 @@
+{
+  "name": "nips-backend",
+  "version": "1.0.0",
+  "description": "Serverless backend for NIPs file management",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "serverless deploy"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1453.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "serverless-dotenv-plugin": "^6.0.0"
+  }
+}

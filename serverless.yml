@@ -1,0 +1,24 @@
+service: serverless-backend
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  environment:
+    USERS_TABLE: nips_users
+    FILES_TABLE: nips_files
+  environment:
+    SECRET_KEY: ${env:SECRET_KEY}
+
+plugins:
+  - serverless-dotenv-plugin
+
+functions:
+  authenticate:
+    handler: src/handlers.authentication.handler
+  register:
+    handler: src/handlers/authentication.registerUser
+  uploadFile:
+    handler: src/handlers.file.uploadHandler
+  fetchFile:
+    handler: src/handlers.file.fetchHandler
