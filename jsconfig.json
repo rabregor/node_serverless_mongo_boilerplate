@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "baseUrl": "src",
+    "paths": {
+      "config": ["./src/config"],
+      "models": ["./src/models"],
+      "middlewares": ["./src/middlewares"],
+      "handlers": ["./src/handlers"],
+      "utils": ["./src/utils"]
+    }
+  }
+}

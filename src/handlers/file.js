@@ -1,37 +1,35 @@
-import AWS from 'aws-sdk';
+import middy from "@middy/core";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import { authenticateJWT } from "../middlewares/auth.js";
+import {
+  getAllFiles,
+  getFileById,
+  createFile,
+  updateFile,
+} from "./helpers/file/index.js";
 
-// Initialize S3 client
-const s3 = new AWS.S3();
+// Handlers y Middlewares para las operaciones de archivos
 
-export const uploadHandler = async (event, context) => {
-  const { filename, contentType } = JSON.parse(event.body);
+export const getAllFilesHandler = middy(async (event, context) => {
+  return getAllFiles(event, context);
+})
+  .use(httpJsonBodyParser())
+  .before(authenticateJWT);
 
-  // Generate pre-signed URL
-  const params = {
-    Bucket: 'YourBucketName',
-    Key: filename,
-    Expires: 60,
-    ContentType: contentType
-  };
+export const getFileByIdHandler = middy(async (event, context) => {
+  return getFileById(event, context);
+})
+  .use(httpJsonBodyParser())
+  .before(authenticateJWT);
 
-  try {
-    const presignedUrl = s3.getSignedUrl('putObject', params);
-    return { statusCode: 200, body: JSON.stringify({ presignedUrl }) };
-  } catch (error) {
-    return { statusCode: 500, body: JSON.stringify(error) };
-  }
-};
+export const createFileHandler = middy(async (event, context) => {
+  return createFile(event, context);
+})
+  .use(httpJsonBodyParser())
+  .before(authenticateJWT);
 
-export const fetchHandler = async (event, context) => {
-  const { filename } = event.pathParameters;
-
-  // Generate S3 object URL
-  const fileUrl = `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${filename}`;
-
-  try {
-    // TODO: Implement additional logic for verification and security
-    return { statusCode: 200, body: JSON.stringify({ fileUrl }) };
-  } catch (error) {
-    return { statusCode: 500, body: JSON.stringify(error) };
-  }
-};
+export const updateFileHandler = middy(async (event, context) => {
+  return updateFile(event, context);
+})
+  .use(httpJsonBodyParser())
+  .before(authenticateJWT);

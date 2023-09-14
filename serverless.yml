@@ -14,27 +14,78 @@ plugins:
   - serverless-offline
 
 functions:
-  authenticate:
-    handler: src/handlers/authentication.authenticateUser
-    events:
-      - http:
-          path: authenticate
-          method: post
+  # Usuarios
   register:
-    handler: src/handlers/authentication.registerUser
+    handler: src/handlers/authentication.registerHandler
     events:
       - http:
           path: register
           method: post
-  uploadFile:
-    handler: src/handlers/file.uploadHandler
+  authenticate:
+    handler: src/handlers/authentication.authHandler
     events:
       - http:
-          path: uploadFile
+          path: authenticate
           method: post
-  fetchFile:
-    handler: src/handlers/file.fetchHandler
+  getAllUsers:
+    handler: src/handlers/admin.getAllUsersHandler
     events:
       - http:
-          path: fetchFile
+          path: users
           method: get
+  getUserById:
+    handler: src/handlers/admin.getUserByIdHandler
+    events:
+      - http:
+          path: users/{id}
+          method: get
+  # Carpetas
+  getAllFolders:
+    handler: src/handlers/folder.getAllFoldersHandler
+    events:
+      - http:
+          path: folders
+          method: get
+  getFolderById:
+    handler: src/handlers/folder.getFolderByIdHandler
+    events:
+      - http:
+          path: folders/{id}
+          method: get
+  createFolder:
+    handler: src/handlers/folder.createFolderHandler
+    events:
+      - http:
+          path: folders
+          method: post
+  updateFolder:
+    handler: src/handlers/folder.updateFolderHandler
+    events:
+      - http:
+          path: folders/{id}
+          method: put
+  # Archivos
+  getAllFiles:
+    handler: src/handlers/file.getAllFilesHandler
+    events:
+      - http:
+          path: files
+          method: get
+  getFileById:
+    handler: src/handlers/file.getFileByIdHandler
+    events:
+      - http:
+          path: files/{id}
+          method: get
+  createFile:
+    handler: src/handlers/file.createFileHandler
+    events:
+      - http:
+          path: files
+          method: post
+  updateFile:
+    handler: src/handlers/file.updateFileHandler
+    events:
+      - http:
+          path: files/{id}
+          method: put
