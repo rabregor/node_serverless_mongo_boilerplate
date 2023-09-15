@@ -13,7 +13,7 @@ const organizationSchema = new dynamoose.Schema(
 
 const options = {
   create: true, // Create table in DB, if it does not exist,
-  waitForActive: false, // Wait for table to be created,
+  waitForActive: true, // Wait for table to be created,
 };
 
 export const Organization = dynamoose.model(

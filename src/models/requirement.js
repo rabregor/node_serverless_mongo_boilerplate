@@ -2,8 +2,22 @@ import dynamoose from "dynamoose";
 import { dynamoConfig } from "../utils/constants.js";
 
 const requirementSchema = new dynamoose.Schema({
-  id: String,
-  folder: String,
+  organization: {
+    type: String,
+    hashKey: true,
+  },
+  id: {
+    type: String,
+    rangeKey: true,
+  },
+  folder: {
+    type: String,
+    index: {
+      global: true,
+      name: "FolderIndex",
+      project: true,
+    },
+  },
   requirement: String,
   status: {
     type: String,
@@ -13,11 +27,11 @@ const requirementSchema = new dynamoose.Schema({
     type: String,
     required: false,
   },
-  organization: String,
 });
 
 const options = {
-  create: false, // Create table in DB, if it does not exist,
+  create: true, // Create table in DB, if it does not exist,
+  waitForActive: true,
 };
 
 export const Requirement = dynamoose.model(

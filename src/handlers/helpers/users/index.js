@@ -3,15 +3,21 @@ import responses from "../../../utils/responses.js";
 
 export const getAllUsers = async (_, { user }) => {
   if (user.type !== "admin") {
-    return responses.forbidden;
+    const orgUsers = await models.User.query("organization")
+      .using("OrganizationIndex")
+      .eq(user.organization)
+      .exec();
+
+    if (!orgUsers) {
+      return responses.notFound("Users");
+    }
+
+    return responses.success("users", orgUsers);
   }
 
   try {
     const users = await models.User.scan().exec();
-    return {
-      statusCode: 200,
-      body: JSON.stringify(users),
-    };
+    return responses.success("users", users);
   } catch (error) {
     console.error("Error fetching all users:", error);
     return responses.internalError(error);
@@ -24,6 +30,13 @@ export const getUserById = async (event, { user }) => {
   try {
     const fetchedUser = await models.User.get(userId);
 
+    if (
+      user.type !== "admin" &&
+      fetchedUser.organization !== user.organization
+    ) {
+      return responses.forbidden("User not from same organization");
+    }
+
     if (!fetchedUser) {
       return responses.notFound("User");
     }
@@ -31,7 +44,7 @@ export const getUserById = async (event, { user }) => {
       user.type !== "admin" &&
       user.organization !== fetchedUser.organization
     ) {
-      return responses.forbidden;
+      return responses.forbidden("User not from same organization");
     }
 
     return responses.success("user", fetchedUser);

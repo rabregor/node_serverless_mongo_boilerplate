@@ -3,70 +3,87 @@ import responses from "../../../utils/responses.js";
 import * as models from "../../../models/index.js";
 
 export const getAllFiles = async (_, { user }) => {
-  if (user.type !== "admin") {
-    return responses.forbidden;
+  if (user.type === "admin") {
+    const files = await models.File.scan().exec();
+    return responses.success("files", files);
   }
 
-  const files = await models.File.scan().exec();
-
-  return responses.success("files", files);
+  const orgFiles = await models.File.query("organization")
+    .using("OrganizationIndex")
+    .eq(user.organization)
+    .exec();
+  return responses.success("files", orgFiles);
 };
 
-export const getFileById = async (event, { user }) => {
-  const fileId = event.pathParameters.id;
-  const file = await models.File.get(fileId);
+export const getFileById = async (
+  { pathParameters: { id, organization } },
+  { user },
+) => {
+  const file = await models.File.get({ folder: organization, id });
 
   if (!file) {
     return responses.notFound("File");
   }
 
   if (user.type !== "admin" && user.organization !== file.organization) {
-    return responses.forbidden;
+    return responses.forbidden("You do not have access to this file");
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(file),
-  };
+  return responses.success("file", file);
 };
 
-export const createFile = async ({ body }) => {
-  const { name, type, organization, folder } = body;
-  const fileId = createUUID();
+export const createFile = async ({ body }, { user }) => {
+  const { name, type, folder } = body;
+
+  if (user.type !== "admin" && user.organization !== folder) {
+    return responses.forbidden("You do not have access to this file");
+  }
+
+  const id = createUUID();
 
   const newFile = new models.File({
-    id: fileId,
+    id,
     name,
     type,
-    organization,
     folder,
+    organization: user.organization, // assuming the organization is available in the user object
   });
 
-  const success = await newFile.save();
-
-  return success
-    ? responses.created("file", { file: newFile })
-    : responses.internalError("Failed to create file");
+  try {
+    await newFile.save();
+    return responses.created("file", { file: newFile });
+  } catch (error) {
+    return responses.internalError(error);
+  }
 };
 
-export const updateFile = async (event) => {
-  const fileId = event.pathParameters.id;
-  const { name, type, organization, folder } = event.body;
-
-  const fileToUpdate = await models.File.get(fileId);
+export const updateFile = async (
+  { pathParameters: { id, organization }, body },
+  { user },
+) => {
+  const fileToUpdate = await models.File.get({ folder: organization, id });
 
   if (!fileToUpdate) {
     return responses.notFound("File");
   }
 
+  if (
+    user.type !== "admin" &&
+    user.organization !== fileToUpdate.organization
+  ) {
+    return responses.forbidden("You do not have access to this file");
+  }
+
+  const { name, type, folder } = body;
+
   fileToUpdate.name = name;
   fileToUpdate.type = type;
-  fileToUpdate.organization = organization;
-  fileToUpdate.folder = folder;
+  fileToUpdate.folder = folder; // You might want to be cautious while updating the folder
 
-  const updatedFile = await fileToUpdate.save();
-
-  return updatedFile
-    ? responses.success("file", updatedFile)
-    : responses.internalError("Failed to update file");
+  try {
+    await fileToUpdate.save();
+    return responses.success("file", fileToUpdate);
+  } catch (error) {
+    return responses.internalError(error);
+  }
 };

@@ -3,9 +3,15 @@ import { dynamoConfig } from "../utils/constants.js";
 
 const folderSchema = new dynamoose.Schema(
   {
-    id: String,
+    organization: {
+      type: String,
+      hashKey: true,
+    },
+    id: {
+      type: String,
+      rangeKey: true,
+    },
     name: String,
-    organization: String,
   },
   {
     timestamps: {
@@ -17,8 +23,7 @@ const folderSchema = new dynamoose.Schema(
 
 const options = {
   create: true, // Create table in DB, if it does not exist,
-  waitForActive: false, // Wait for table to be created,
-  prefix: "id", // Custom prefix for table name
+  waitForActive: true, // Wait for table to be created,
 };
 
 export const Folder = dynamoose.model(

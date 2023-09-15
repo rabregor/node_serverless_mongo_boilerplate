@@ -55,7 +55,7 @@ functions:
     handler: src/handlers/folder.getFolderByIdHandler
     events:
       - http:
-          path: folders/{id}
+          path: folders/{organization}/{id}
           method: get
   createFolder:
     handler: src/handlers/folder.createFolderHandler
@@ -67,7 +67,7 @@ functions:
     handler: src/handlers/folder.updateFolderHandler
     events:
       - http:
-          path: folders/{id}
+          path: folders/{organization}/{id}
           method: put
   # Requirements
   getAllRequirements:
@@ -80,7 +80,7 @@ functions:
     handler: src/handlers/requirement.getRequirementByIdHandler
     events:
       - http:
-          path: requirements/{id}
+          path: requirements/{organization}/{id}
           method: get
   createRequirement:
     handler: src/handlers/requirement.createRequirementHandler
@@ -92,7 +92,7 @@ functions:
     handler: src/handlers/requirement.updateRequirementHandler
     events:
       - http:
-          path: requirements/{id}
+          path: requirements/{organization}/{id}
           method: put
   # Files
   getAllFiles:
@@ -105,7 +105,7 @@ functions:
     handler: src/handlers/file.getFileByIdHandler
     events:
       - http:
-          path: files/{id}
+          path: files/{organization}/{id}
           method: get
   createFile:
     handler: src/handlers/file.createFileHandler
@@ -117,5 +117,5 @@ functions:
     handler: src/handlers/file.updateFileHandler
     events:
       - http:
-          path: files/{id}
+          path: files/{organization}/{id}
           method: put

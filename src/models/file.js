@@ -3,18 +3,28 @@ import { dynamoConfig } from "../utils/constants.js";
 
 const fileSchema = new dynamoose.Schema(
   {
-    id: String,
+    folder: {
+      type: String,
+      hashKey: true,
+    },
+    id: {
+      type: String,
+      rangeKey: true,
+    },
+    organization: {
+      type: String,
+      index: {
+        global: true,
+        name: "OrganizationIndex",
+        project: true,
+      },
+    },
     name: String,
     path: String,
     type: String,
     createdAt: Date,
     updatedAt: Date,
     createdBy: String,
-    organization: String,
-    folder: {
-      type: String,
-      required: false,
-    },
     deleted: Boolean,
   },
   {
@@ -26,8 +36,8 @@ const fileSchema = new dynamoose.Schema(
 );
 
 const options = {
-  create: true, // Create table in DB, if it does not exist,
-  waitForActive: false, // Wait for table to be created,
+  create: true,
+  waitForActive: true,
 };
 
 export const File = dynamoose.model(

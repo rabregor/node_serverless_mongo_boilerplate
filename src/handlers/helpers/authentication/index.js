@@ -6,7 +6,15 @@ import responses from "../../../utils/responses.js";
 
 const registerUser = async ({ body }, { user }) => {
   if (user.type !== "admin") {
-    return responses.forbidden;
+    return responses.forbidden("Only admins can create users!");
+  }
+
+  if (!body.organization || !body.email)
+    return responses.badRequest("organization");
+
+  const existingUser = await models.User.query("email").eq(body.email).exec();
+  if (existingUser.count > 0) {
+    return responses.forbidden("User / email already exists!");
   }
 
   const { password, ...rest } = body;

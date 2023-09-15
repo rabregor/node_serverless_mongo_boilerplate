@@ -3,7 +3,10 @@ import { dynamoConfig } from "../utils/constants.js";
 
 const userSchema = new dynamoose.Schema(
   {
-    email: String,
+    email: {
+      type: String,
+      hashKey: true,
+    },
     name: String,
     lastName: String,
     password: String,
@@ -12,7 +15,14 @@ const userSchema = new dynamoose.Schema(
       enum: ["client", "admin"],
     },
     isEnterprise: Boolean,
-    organization: String,
+    organization: {
+      type: String,
+      index: {
+        global: true,
+        name: "OrganizationIndex",
+        project: true,
+      },
+    },
   },
   {
     timestamps: {
@@ -22,4 +32,13 @@ const userSchema = new dynamoose.Schema(
   },
 );
 
-export const User = dynamoose.model(dynamoConfig.tables.user, userSchema);
+const options = {
+  create: true, // Create table in DB, if it does not exist,
+  waitForActive: true, // Wait for table to be created,
+};
+
+export const User = dynamoose.model(
+  dynamoConfig.tables.user,
+  userSchema,
+  options,
+);

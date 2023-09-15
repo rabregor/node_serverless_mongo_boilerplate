@@ -9,6 +9,7 @@ const createOrganization = async ({ body: { name } }) => {
   });
 
   try {
+    console.log({ newOrganization });
     await newOrganization.save();
     return responses.created("organization", newOrganization);
   } catch (error) {
