@@ -26,6 +26,9 @@ jobs:
     - name: Install Yarn
       run: npm install -g yarn
 
+    - name: Install Serverless Framework
+      run: yarn global add serverless
+
     - name: Install Dependencies
       run: yarn install
 
