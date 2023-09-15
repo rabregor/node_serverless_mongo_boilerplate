@@ -31,7 +31,7 @@ const responses = Object.freeze({
     },
     body: JSON.stringify({ message: `Bad Request: ${field} is required` }),
   }),
-  success: (modelType, model) => {
+  success: (modelType, model, args = {}) => {
     const resModel = model.toJSON ? model.toJSON() : model;
     return {
       statusCode: 200,
@@ -39,7 +39,11 @@ const responses = Object.freeze({
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": true,
       },
-      body: JSON.stringify({ message: "Success!", [`${modelType}`]: resModel }),
+      body: JSON.stringify({
+        message: "Success!",
+        [`${modelType}`]: resModel,
+        ...args,
+      }),
     };
   },
   created: (modelType, model, args = {}) => {
