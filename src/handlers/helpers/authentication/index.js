@@ -41,18 +41,12 @@ const authenticateUser = async ({ body }) => {
   try {
     const user = await models.User.get({ email });
     if (!user) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({ message: "User not found" }),
-      };
+      return responses.notFound("User");
     }
     const isMatch = await bcrypt.compare(password, user?.password);
 
     if (!isMatch) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ message: "Unauthorized" }),
-      };
+      return responses.forbidden("Invalid credentials!");
     }
 
     const payload = {
@@ -63,12 +57,9 @@ const authenticateUser = async ({ body }) => {
 
     // Generate JWT
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: "Authenticated!", token, user: payload }),
-    };
+    return responses.success("token", token);
   } catch (error) {
-    return { statusCode: 500, body: JSON.stringify(error) };
+    return responses.internalError(error);
   }
 };
 
