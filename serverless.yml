@@ -8,8 +8,12 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "s3:*"  # All S3 actions
+        - "s3:*"  
       Resource: "arn:aws:s3:::nips-backend/*"
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"  
+      Resource: "*" 
   environment:
     SECRET_KEY: ${env.SECRET_KEY}
 
