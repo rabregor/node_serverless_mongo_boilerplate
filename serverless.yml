@@ -1,5 +1,17 @@
 service: NiPS-backend
 
+defaults: &defaults
+  cors:
+    origin: '*'
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+    allowCredentials: false
+
 provider:
   name: aws
   runtime: nodejs16.x
@@ -29,6 +41,7 @@ functions:
       - http:
           path: organization
           method: post
+          <<: *defaults
   # Users
   register:
     handler: src/handlers/authentication.registerHandler
@@ -36,24 +49,28 @@ functions:
       - http:
           path: register
           method: post
+          <<: *defaults
   authenticate:
     handler: src/handlers/authentication.authHandler
     events:
       - http:
           path: authenticate
           method: post
+          <<: *defaults
   getAllUsers:
     handler: src/handlers/user.getAllUsersHandler
     events:
       - http:
           path: users
           method: get
+          <<: *defaults
   getUserById:
     handler: src/handlers/user.getUserByIdHandler
     events:
       - http:
           path: users/{id}
           method: get
+          <<: *defaults
   # Folders
   getAllFolders:
     handler: src/handlers/folder.getAllFoldersHandler
@@ -61,24 +78,28 @@ functions:
       - http:
           path: folders
           method: get
+          <<: *defaults
   getFolderById:
     handler: src/handlers/folder.getFolderByIdHandler
     events:
       - http:
           path: folders/{organization}/{id}
           method: get
+          <<: *defaults
   createFolder:
     handler: src/handlers/folder.createFolderHandler
     events:
       - http:
           path: folders
           method: post
+          <<: *defaults
   updateFolder:
     handler: src/handlers/folder.updateFolderHandler
     events:
       - http:
           path: folders/{organization}/{id}
           method: put
+          <<: *defaults
   # Requirements
   getAllRequirements:
     handler: src/handlers/requirement.getAllRequirementsHandler
@@ -86,24 +107,28 @@ functions:
       - http:
           path: requirements
           method: get
+          <<: *defaults
   getRequirementById:
     handler: src/handlers/requirement.getRequirementByIdHandler
     events:
       - http:
           path: requirements/{organization}/{id}
           method: get
+          <<: *defaults
   createRequirement:
     handler: src/handlers/requirement.createRequirementHandler
     events:
       - http:
           path: requirements
           method: post
+          <<: *defaults
   updateRequirement:
     handler: src/handlers/requirement.updateRequirementHandler
     events:
       - http:
           path: requirements/{organization}/{id}
           method: put
+          <<: *defaults
   # Files
   getAllFiles:
     handler: src/handlers/file.getAllFilesHandler
@@ -111,21 +136,25 @@ functions:
       - http:
           path: files
           method: get
+          <<: *defaults
   getFileById:
     handler: src/handlers/file.getFileByIdHandler
     events:
       - http:
           path: files/{organization}/{id}
           method: get
+          <<: *defaults
   createFile:
     handler: src/handlers/file.createFileHandler
     events:
       - http:
           path: files
           method: post
+          <<: *defaults
   updateFile:
     handler: src/handlers/file.updateFileHandler
     events:
       - http:
           path: files/{organization}/{id}
           method: put
+          <<: *defaults
