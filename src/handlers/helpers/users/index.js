@@ -17,7 +17,7 @@ export const getAllUsers = async (_, { user }) => {
 
   try {
     const users = await models.User.scan().exec();
-    return responses.success("users", users);
+    return responses.success("users", users.toJSON());
   } catch (error) {
     console.error("Error fetching all users:", error);
     return responses.internalError(error);

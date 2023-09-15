@@ -12,20 +12,30 @@ const responses = Object.freeze({
     body: JSON.stringify({ message: "Internal Server Error", error }),
   }),
   badRequest: (field) => ({
-    code: 400,
+    statusCode: 400,
     body: JSON.stringify({ message: `Bad Request: ${field} is required` }),
   }),
-  success: (modelType, model) => ({
-    code: 200,
-    body: JSON.stringify({ message: "Success!", [`${modelType}`]: model }),
-  }),
-  created: (modelType, model) => ({
-    code: 201,
-    body: JSON.stringify({ message: "Created!", [`${modelType}`]: model }),
-  }),
+  success: (modelType, model) => {
+    const resModel = model.toJSON ? model.toJSON() : model;
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Success!", [`${modelType}`]: resModel }),
+    };
+  },
+  created: (modelType, model) => {
+    const resModel = model.toJSON ? model.toJSON() : model;
+    return {
+      statusCode: 201,
+      body: JSON.stringify({ message: "Created!", [`${modelType}`]: resModel }),
+    };
+  },
   accepted: {
-    code: 202,
+    statusCode: 202,
     body: JSON.stringify({ message: "Accepted" }),
   },
+  unauthorized: (message) => ({
+    statusCode: 401,
+    body: JSON.stringify({ message }),
+  }),
 });
 export default responses;
