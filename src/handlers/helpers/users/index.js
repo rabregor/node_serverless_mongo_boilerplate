@@ -11,13 +11,22 @@ export const getAllUsers = async (_, { user }) => {
     if (!orgUsers) {
       return responses.notFound("Users");
     }
-
-    return responses.success("users", orgUsers);
+    const users = orgUsers.toJSON();
+    const usersWithoutPassword = users.map((user) => {
+      delete user.password;
+      return user;
+    });
+    return responses.success("users", usersWithoutPassword);
   }
 
   try {
-    const users = await models.User.scan().exec();
-    return responses.success("users", users.toJSON());
+    const allUsers = await models.User.scan().exec();
+    const users = allUsers.toJSON();
+    const usersWithoutPassword = users.map((user) => {
+      delete user.password;
+      return user;
+    });
+    return responses.success("users", usersWithoutPassword);
   } catch (error) {
     console.error("Error fetching all users:", error);
     return responses.internalError(error);
@@ -46,7 +55,7 @@ export const getUserById = async (event, { user }) => {
     ) {
       return responses.forbidden("User not from same organization");
     }
-
+    delete fetchedUser.password;
     return responses.success("user", fetchedUser);
   } catch (error) {
     console.error(`Error fetching user by ID ${userId}:`, error);

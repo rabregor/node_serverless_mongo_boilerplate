@@ -57,9 +57,9 @@ const authenticateUser = async ({ body }) => {
 
     // Generate JWT
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
-    return responses.success("token", token);
+    return responses.success("token", token, { user: payload });
   } catch (error) {
-    return responses.internalError(error);
+    return { statusCode: 500, body: JSON.stringify(error) };
   }
 };
 

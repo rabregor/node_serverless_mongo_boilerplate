@@ -42,7 +42,7 @@ const responses = Object.freeze({
       body: JSON.stringify({ message: "Success!", [`${modelType}`]: resModel }),
     };
   },
-  created: (modelType, model) => {
+  created: (modelType, model, args = {}) => {
     const resModel = model.toJSON ? model.toJSON() : model;
     return {
       statusCode: 201,
@@ -50,7 +50,11 @@ const responses = Object.freeze({
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": true,
       },
-      body: JSON.stringify({ message: "Created!", [`${modelType}`]: resModel }),
+      body: JSON.stringify({
+        message: "Created!",
+        [`${modelType}`]: resModel,
+        ...args,
+      }),
     };
   },
   accepted: {
