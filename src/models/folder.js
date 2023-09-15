@@ -1,15 +1,19 @@
 import dynamoose from "dynamoose";
-import { dynamoConfig } from "utils/constants";
+import { dynamoConfig } from "../utils/constants.js";
 
-const folderSchema = new dynamoose.Schema({
-  id: String,
-  name: String,
-  organization: String,
-  requirements: {
-    type: Array,
-    schema: [String],
+const folderSchema = new dynamoose.Schema(
+  {
+    id: String,
+    name: String,
+    organization: String,
   },
-});
+  {
+    timestamps: {
+      createdAt: ["createDate", "creation"],
+      updatedAt: ["updateDate", "updated"],
+    },
+  },
+);
 
 const options = {
   create: true, // Create table in DB, if it does not exist,

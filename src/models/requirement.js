@@ -1,5 +1,5 @@
 import dynamoose from "dynamoose";
-import { dynamoConfig } from "utils/constants";
+import { dynamoConfig } from "../utils/constants.js";
 
 const requirementSchema = new dynamoose.Schema({
   id: String,
@@ -18,9 +18,6 @@ const requirementSchema = new dynamoose.Schema({
 
 const options = {
   create: false, // Create table in DB, if it does not exist,
-  waitForActive: false, // Wait for table to be created,
-  prefix: "id", // Custom prefix for table name
-  suffix: "requirement", // Custom suffix for table name
 };
 
 export const Requirement = dynamoose.model(

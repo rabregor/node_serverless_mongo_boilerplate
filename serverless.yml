@@ -5,8 +5,6 @@ provider:
   runtime: nodejs16.x
   stage: dev
   environment:
-    USERS_TABLE: nips_users
-    FILES_TABLE: nips_files
     SECRET_KEY: ${env.SECRET_KEY}
 
 plugins:
@@ -14,7 +12,14 @@ plugins:
   - serverless-offline
 
 functions:
-  # Usuarios
+  # Organizations
+  createOrganization:
+    handler: src/handlers/organization.createOrganizationHandler
+    events:
+      - http:
+          path: organization
+          method: post
+  # Users
   register:
     handler: src/handlers/authentication.registerHandler
     events:
@@ -28,18 +33,18 @@ functions:
           path: authenticate
           method: post
   getAllUsers:
-    handler: src/handlers/admin.getAllUsersHandler
+    handler: src/handlers/user.getAllUsersHandler
     events:
       - http:
           path: users
           method: get
   getUserById:
-    handler: src/handlers/admin.getUserByIdHandler
+    handler: src/handlers/user.getUserByIdHandler
     events:
       - http:
           path: users/{id}
           method: get
-  # Carpetas
+  # Folders
   getAllFolders:
     handler: src/handlers/folder.getAllFoldersHandler
     events:
@@ -64,7 +69,32 @@ functions:
       - http:
           path: folders/{id}
           method: put
-  # Archivos
+  # Requirements
+  getAllRequirements:
+    handler: src/handlers/requirement.getAllRequirementsHandler
+    events:
+      - http:
+          path: requirements
+          method: get
+  getRequirementById:
+    handler: src/handlers/requirement.getRequirementByIdHandler
+    events:
+      - http:
+          path: requirements/{id}
+          method: get
+  createRequirement:
+    handler: src/handlers/requirement.createRequirementHandler
+    events:
+      - http:
+          path: requirements
+          method: post
+  updateRequirement:
+    handler: src/handlers/requirement.updateRequirementHandler
+    events:
+      - http:
+          path: requirements/{id}
+          method: put
+  # Files
   getAllFiles:
     handler: src/handlers/file.getAllFilesHandler
     events:

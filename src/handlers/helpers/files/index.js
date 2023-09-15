@@ -1,35 +1,27 @@
 import { createUUID } from "../../../utils/functions.js";
-import {
-  getItem,
-  putItem,
-  getAllItems,
-  updateItem,
-} from "../../../utils/dynamoHandler.js";
+import responses from "../../../utils/responses.js";
+import * as models from "../../../models/index.js";
 
 export const getAllFiles = async (_, { user }) => {
   if (user.type !== "admin") {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({ message: "Forbidden" }),
-    };
+    return responses.forbidden;
   }
-  const files = await getAllItems("Files");
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(files),
-  };
+  const files = await models.File.scan().exec();
+
+  return responses.success("files", files);
 };
 
-export const getFileById = async (event) => {
+export const getFileById = async (event, { user }) => {
   const fileId = event.pathParameters.id;
-  const file = await getItem("Files", { id: fileId });
+  const file = await models.File.get(fileId);
 
   if (!file) {
-    return {
-      statusCode: 404,
-      body: JSON.stringify({ message: "File not found" }),
-    };
+    return responses.notFound("File");
+  }
+
+  if (user.type !== "admin" && user.organization !== file.organization) {
+    return responses.forbidden;
   }
 
   return {
@@ -38,11 +30,11 @@ export const getFileById = async (event) => {
   };
 };
 
-export const createFile = async (event) => {
-  const { name, type, organization, folder } = JSON.parse(event.body);
+export const createFile = async ({ body }) => {
+  const { name, type, organization, folder } = body;
   const fileId = createUUID();
 
-  const success = await putItem("Files", {
+  const newFile = new models.File({
     id: fileId,
     name,
     type,
@@ -50,53 +42,31 @@ export const createFile = async (event) => {
     folder,
   });
 
+  const success = await newFile.save();
+
   return success
-    ? {
-        statusCode: 201,
-        body: JSON.stringify({ id: fileId }),
-      }
-    : {
-        statusCode: 500,
-        body: JSON.stringify({ message: "Failed to create file" }),
-      };
+    ? responses.created("file", { file: newFile })
+    : responses.internalError("Failed to create file");
 };
 
 export const updateFile = async (event) => {
   const fileId = event.pathParameters.id;
-  const { name, type, organization, folder } = JSON.parse(event.body);
+  const { name, type, organization, folder } = event.body;
 
-  const updateExpression =
-    "SET #n = :name, #t = :type, #o = :organization, #f = :folder";
-  const expressionAttributeValues = {
-    ":name": name,
-    ":type": type,
-    ":organization": organization,
-    ":folder": folder,
-  };
-  const expressionAttributeNames = {
-    "#n": "name",
-    "#t": "type",
-    "#o": "organization",
-    "#f": "folder",
-  };
+  const fileToUpdate = await models.File.get(fileId);
 
-  const updatedFile = await updateItem(
-    "Files",
-    { id: fileId },
-    updateExpression,
-    expressionAttributeValues,
-    expressionAttributeNames,
-  );
-
-  if (!updatedFile) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: "Failed to update file" }),
-    };
+  if (!fileToUpdate) {
+    return responses.notFound("File");
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(updatedFile),
-  };
+  fileToUpdate.name = name;
+  fileToUpdate.type = type;
+  fileToUpdate.organization = organization;
+  fileToUpdate.folder = folder;
+
+  const updatedFile = await fileToUpdate.save();
+
+  return updatedFile
+    ? responses.success("file", updatedFile)
+    : responses.internalError("Failed to update file");
 };

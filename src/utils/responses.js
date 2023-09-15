@@ -1,28 +1,28 @@
 const responses = Object.freeze({
   forbidden: {
-    code: 403,
+    statusCode: 403,
     body: JSON.stringify({ message: "Forbidden" }),
   },
-  notFound: {
-    code: 404,
-    body: JSON.stringify({ message: "Not found" }),
-  },
-  internalServerError: {
-    code: 500,
-    body: JSON.stringify({ message: "Internal server error" }),
-  },
+  notFound: (resource) => ({
+    statusCode: 404,
+    body: JSON.stringify({ message: `${resource} not found` }),
+  }),
+  internalError: (error) => ({
+    statusCode: 500,
+    body: JSON.stringify({ message: "Internal Server Error", error }),
+  }),
   badRequest: {
     code: 400,
     body: JSON.stringify({ message: "Bad request" }),
   },
-  ok: {
+  success: (modelType, model) => ({
     code: 200,
-    body: JSON.stringify({ message: "OK" }),
-  },
-  created: {
+    body: JSON.stringify({ message: "Success!", [`${modelType}`]: model }),
+  }),
+  created: (modelType, model) => ({
     code: 201,
-    body: JSON.stringify({ message: "Created" }),
-  },
+    body: JSON.stringify({ message: "Created!", [`${modelType}`]: model }),
+  }),
   accepted: {
     code: 202,
     body: JSON.stringify({ message: "Accepted" }),

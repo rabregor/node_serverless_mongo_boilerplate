@@ -1,5 +1,5 @@
-export { User } from "./user";
-export { File } from "./file";
-export { Folder } from "./folder";
-export { Organization } from "./organization";
-export { Requirement } from "./requirement";
+export { User } from "./user.js";
+export { File } from "./file.js";
+export { Folder } from "./folder.js";
+export { Organization } from "./organization.js";
+export { Requirement } from "./requirement.js";

@@ -1,94 +1,77 @@
 import { createUUID } from "../../../utils/functions.js";
-import {
-  getItem,
-  putItem,
-  getAllItems,
-  updateItem,
-} from "../../../utils/dynamoHandler.js";
+import responses from "../../../utils/responses.js";
+import * as models from "../../../models/index.js";
 
-export const getAllFolders = async (event, { user }) => {
-  const files = await getAllItems("Folders");
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify(files),
-  };
+export const getAllFolders = async (_, { user }) => {
+  if (user.type !== "admin") {
+    return responses.forbidden;
+  }
+  const folders = await models.Folder.scan().exec();
+  return responses.success("folders", folders);
 };
 
-export const getFolderById = async (event, { user }) => {
+export const getFolderById = async (event) => {
   const folderId = event.pathParameters.id;
-  const folder = await getItem("Folders", { id: folderId });
+  const folder = await models.Folder.get(folderId);
 
   if (!folder) {
-    return {
-      statusCode: 404,
-      body: JSON.stringify({ message: "Folder not found" }),
-    };
+    return responses.notFound("Folder");
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(folder),
-  };
+  return responses.success("folder", folder);
 };
 
-export const createFolder = async (event, { user }) => {
-  const { name, organization } = JSON.parse(event.body);
+export const createFolder = async ({ body }) => {
+  const { name, organization, requirements } = body;
   const folderId = createUUID();
 
-  const success = await putItem("Folders", {
+  const newFolder = new models.Folder({
     id: folderId,
     name,
     organization,
   });
 
-  return success
-    ? {
-        statusCode: 201,
-        body: JSON.stringify({ id: folderId }),
-      }
-    : {
-        statusCode: 500,
-        body: JSON.stringify({ message: "Failed to create folder" }),
-      };
-};
+  const success = await newFolder.save();
 
-export const updateFolder = async (event, { user }) => {
-  const folderId = event.pathParameters.id;
-  const { name, type, organization, folder } = JSON.parse(event.body);
-
-  const updateExpression =
-    "SET #n = :name, #t = :type, #o = :organization, #f = :folder";
-  const expressionAttributeValues = {
-    ":name": name,
-    ":type": type,
-    ":organization": organization,
-    ":folder": folder,
-  };
-  const expressionAttributeNames = {
-    "#n": "name",
-    "#t": "type",
-    "#o": "organization",
-    "#f": "folder",
-  };
-
-  const updatedFile = await updateItem(
-    "Folders",
-    { id: folderId },
-    updateExpression,
-    expressionAttributeValues,
-    expressionAttributeNames,
-  );
-
-  if (!updatedFile) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: "Failed to update file" }),
-    };
+  if (requirements && Array.isArray(requirements)) {
+    for (const req of requirements) {
+      const requirementId = createUUID();
+      const newRequirement = new models.Requirement({
+        id: requirementId,
+        folder: folderId,
+        ...req,
+        organization,
+      });
+      await newRequirement.save();
+    }
   }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(updatedFile),
-  };
+  return success
+    ? responses.created("folder", { folder: { ...newFolder, requirements } })
+    : responses.internalError("Failed to create folder");
+};
+
+export const updateFolder = async ({
+  pathParameters: { id: folderId },
+  body,
+}) => {
+  if (!folderId) {
+    return responses.badRequest;
+  }
+  const { name, organization } = body;
+
+  const folderToUpdate = await models.Folder.get(folderId);
+
+  if (!folderToUpdate) {
+    return responses.notFound("Folder");
+  }
+
+  folderToUpdate.name = name;
+  folderToUpdate.organization = organization;
+
+  const updatedFolder = await folderToUpdate.save();
+
+  return updatedFolder
+    ? responses.success("folder", updatedFolder)
+    : responses.internalError("Failed to update folder");
 };
