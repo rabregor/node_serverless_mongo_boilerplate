@@ -1,5 +1,4 @@
-service: 
-  name: NiPS-backend
+service: NiPS-backend
 
 provider:
   name: aws
