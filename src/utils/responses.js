@@ -42,7 +42,7 @@ const responses = Object.freeze({
       },
       body: JSON.stringify({
         message: "Success!",
-        [`${modelType}`]: resModel,
+        [`${modelType}`]: resModel ?? [],
         ...args,
       }),
     };

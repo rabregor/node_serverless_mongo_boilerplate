@@ -4,7 +4,11 @@ import * as models from "../../../models/index.js";
 
 export const getAllFiles = async (_, { user }) => {
   if (user.type === "admin") {
+    console.log("aqui");
     const files = await models.File.scan().exec();
+    if (!files.length) {
+      return responses.success("files", []);
+    }
     return responses.success("files", files);
   }
 
@@ -12,6 +16,9 @@ export const getAllFiles = async (_, { user }) => {
     .using("OrganizationIndex")
     .eq(user.organization)
     .exec();
+  if (!orgFiles.length) {
+    return responses.success("files", []);
+  }
   return responses.success("files", orgFiles);
 };
 

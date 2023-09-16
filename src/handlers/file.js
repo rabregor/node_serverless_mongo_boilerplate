@@ -6,7 +6,7 @@ import {
   getFileById,
   createFile,
   updateFile,
-} from "./helpers/file/index.js";
+} from "./helpers/files/index.js";
 
 // Handlers y Middlewares para las operaciones de archivos
 
