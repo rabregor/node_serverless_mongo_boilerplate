@@ -16,10 +16,10 @@ export const getAllFiles = async (_, { user }) => {
 };
 
 export const getFileById = async (
-  { pathParameters: { id, organization } },
+  { pathParameters: { id, folder } },
   { user },
 ) => {
-  const file = await models.File.get({ folder: organization, id });
+  const file = await models.File.get({ folder, id });
 
   if (!file) {
     return responses.notFound("File");
@@ -33,20 +33,29 @@ export const getFileById = async (
 };
 
 export const createFile = async ({ body }, { user }) => {
-  const { name, type, folder } = body;
+  const { name, type, folder, path } = body;
 
-  if (user.type !== "admin" && user.organization !== folder) {
+  if (!path) {
+    return responses.error("S3 path is required");
+  }
+  const [folderObj] = await models.Folder.scan("id").eq(folder).exec();
+
+  if (!folderObj) {
+    return responses.notFound("Folder");
+  }
+
+  if (user.type !== "admin" && user.organization !== folderObj.organization) {
     return responses.forbidden("You do not have access to this file");
   }
 
   const id = createUUID();
-
   const newFile = new models.File({
     id,
     name,
     type,
     folder,
-    organization: user.organization, // assuming the organization is available in the user object
+    organization: folderObj.organization,
+    path: path,
   });
 
   try {
@@ -58,10 +67,10 @@ export const createFile = async ({ body }, { user }) => {
 };
 
 export const updateFile = async (
-  { pathParameters: { id, organization }, body },
+  { pathParameters: { id, folder }, body },
   { user },
 ) => {
-  const fileToUpdate = await models.File.get({ folder: organization, id });
+  const fileToUpdate = await models.File.get({ folder, id });
 
   if (!fileToUpdate) {
     return responses.notFound("File");
@@ -74,11 +83,13 @@ export const updateFile = async (
     return responses.forbidden("You do not have access to this file");
   }
 
-  const { name, type, folder } = body;
+  const updatableProperties = ["name", "type", "folder", "path"];
 
-  fileToUpdate.name = name;
-  fileToUpdate.type = type;
-  fileToUpdate.folder = folder; // You might want to be cautious while updating the folder
+  updatableProperties.forEach((key) => {
+    if (key in body) {
+      fileToUpdate[key] = body[key];
+    }
+  });
 
   try {
     await fileToUpdate.save();

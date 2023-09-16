@@ -255,7 +255,7 @@ functions:
     handler: src/handlers/file.getFileByIdHandler
     events:
       - http:
-          path: files/{organization}/{id}
+          path: files/{folder}/{id}
           method: get
           cors:
               origin: '*'
@@ -287,8 +287,27 @@ functions:
     handler: src/handlers/file.updateFileHandler
     events:
       - http:
-          path: files/{organization}/{id}
+          path: files/{folder}/{id}
           method: put
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+  s3UploadHandler:
+    handler: src/handlers/file.s3UploadHandler
+    events:
+      - s3:
+          bucket: nips-backend
+          event: s3:ObjectCreated:*
+      - http:
+          path: files/upload
+          method: post
           cors:
             origin: '*'
             headers:
