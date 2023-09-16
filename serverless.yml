@@ -316,7 +316,7 @@ functions:
               - X-Amz-User-Agent
             allowCredentials: false
   s3UploadHandler:
-    handler: src/handlers/file.s3UploadHandler
+    handler: src/handlers/s3Upload.s3UploadHandler
     events:
       - s3:
           bucket: nips-backend
