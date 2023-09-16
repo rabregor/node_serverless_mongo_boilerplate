@@ -104,6 +104,22 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: false
+  getUserByToken:
+    handler: src/handlers/user.getUserByTokenHandler
+    events:
+      - http:
+          path: users/me
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
   # Folders
   getAllFolders:
     handler: src/handlers/folder.getAllFoldersHandler

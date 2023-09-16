@@ -33,9 +33,10 @@ export const getAllUsers = async (_, { user }) => {
   }
 };
 
-export const getUserById = async (event, { user }) => {
-  const userId = event.pathParameters.id;
-
+export const getUserById = async (
+  { pathParameters: { id: userId } },
+  { user },
+) => {
   try {
     const fetchedUser = await models.User.get(userId);
 
@@ -59,6 +60,20 @@ export const getUserById = async (event, { user }) => {
     return responses.success("user", fetchedUser);
   } catch (error) {
     console.error(`Error fetching user by ID ${userId}:`, error);
+    return responses.internalError(error);
+  }
+};
+
+export const getUserByToken = async (_, { user }) => {
+  try {
+    const fetchedUser = await models.User.get(user.email);
+
+    if (!fetchedUser) {
+      return responses.notFound("User");
+    }
+    delete fetchedUser.password;
+    return responses.success("user", fetchedUser);
+  } catch (error) {
     return responses.internalError(error);
   }
 };
