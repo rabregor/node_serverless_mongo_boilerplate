@@ -33,6 +33,7 @@ const responses = Object.freeze({
   }),
   success: (modelType, model, args = {}) => {
     const resModel = model.toJSON ? model.toJSON() : model;
+
     return {
       statusCode: 200,
       headers: {
