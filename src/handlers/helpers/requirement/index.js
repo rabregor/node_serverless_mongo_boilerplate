@@ -5,12 +5,31 @@ import * as models from "../../../models/index.js";
 export const getAllRequirements = async (_, { user }) => {
   if (user.type === "admin") {
     const allRequirements = await models.Requirement.scan().exec();
+    for (const requirement of allRequirements) {
+      if (requirement.file !== "" && requirement.folder !== "") {
+        const file = await models.File.get({
+          id: requirement.file,
+          folder: requirement.folder,
+        });
+        requirement.file = file ? file : null;
+      }
+    }
     return responses.success("requirements", allRequirements);
   }
 
   const requirements = await models.Requirement.query("organization")
     .eq(user.organization)
     .exec();
+
+  for (const requirement of requirements) {
+    if (requirement.file !== "" && requirement.folder !== "") {
+      const file = await models.File.get({
+        id: requirement.file,
+        folder: requirement.folder,
+      });
+      requirement.file = file ? file : null;
+    }
+  }
 
   return responses.success("requirements", requirements);
 };
@@ -27,6 +46,14 @@ export const getRequirementById = async (
 
   if (user.type !== "admin" && user.organization !== requirement.organization) {
     return responses.forbidden("You do not have access to this requirement");
+  }
+
+  if (requirement.file !== "" && requirement.folder !== "") {
+    const file = await models.File.get({
+      id: requirement.file,
+      folder: requirement.folder,
+    });
+    requirement.file = file ? file : null;
   }
 
   return responses.success("requirement", requirement);

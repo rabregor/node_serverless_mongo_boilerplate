@@ -16,6 +16,16 @@ export const getAllFolders = async (_, { user }) => {
             .exec();
           if (requirements.length > 0) {
             folder.requirements = requirements;
+            for (const requirement of folder.requirements) {
+              if (requirement.file !== "" && requirement.folder !== "") {
+                console.log(requirement.file, requirement.folder);
+                const file = await models.File.get({
+                  id: requirement.file,
+                  folder: requirement.folder,
+                });
+                requirement.file = file ? file : null;
+              }
+            }
           } else {
             folder.requirements = [];
           }
@@ -38,6 +48,15 @@ export const getAllFolders = async (_, { user }) => {
 
         if (requirements.length > 0) {
           folder.requirements = requirements;
+          for (const requirement of folder.requirements) {
+            if (requirement.file !== "" && requirement.folder !== "") {
+              const file = await models.File.get({
+                id: requirement.file,
+                folder: requirement.folder,
+              });
+              requirement.file = file ? file : null;
+            }
+          }
         } else {
           folder.requirements = [];
         }
