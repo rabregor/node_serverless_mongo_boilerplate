@@ -20,7 +20,7 @@ export const s3Upload = async ({ body }) => {
       ACL: "public-read", // Set the permissions as per your requirements
     };
     const uploadURL = await s3.getSignedUrlPromise("putObject", s3Params);
-    return responses.success("uploadURL", uploadURL);
+    return responses.success("uploadURL", uploadURL, { s3FileKey });
   } catch (error) {
     console.error(error);
     return responses.internalError(error);

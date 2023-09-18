@@ -4,7 +4,6 @@ import * as models from "../../../models/index.js";
 
 export const getAllFiles = async (_, { user }) => {
   if (user.type === "admin") {
-    console.log("aqui");
     const files = await models.File.scan().exec();
     if (!files.length) {
       return responses.success("files", []);
@@ -43,7 +42,7 @@ export const createFile = async ({ body }, { user }) => {
   const { name, type, folder, path } = body;
 
   if (!path) {
-    return responses.error("S3 path is required");
+    return responses.badRequest("S3 path is required");
   }
   const [folderObj] = await models.Folder.scan("id").eq(folder).exec();
 

@@ -1,6 +1,18 @@
 import * as models from "../../../models/index.js";
 import responses from "../../../utils/responses.js";
 
+const fetchUsersOrganization = async (users) => {
+  const usersWithOrg = [];
+  for (let user of users) {
+    if (user.organization) {
+      const org = await models.Organization.get(user.organization);
+      user.organization = org ? org.toJSON() : null;
+      usersWithOrg.push(user);
+    }
+  }
+  return usersWithOrg;
+};
+
 export const getAllUsers = async (_, { user }) => {
   if (user.type !== "admin") {
     const orgUsers = await models.User.query("organization")
@@ -12,7 +24,9 @@ export const getAllUsers = async (_, { user }) => {
       return responses.notFound("Users");
     }
     const users = orgUsers.toJSON();
-    const usersWithoutPassword = users.map((user) => {
+    const usersWithOrg = await fetchUsersOrganization(users);
+
+    const usersWithoutPassword = usersWithOrg.map((user) => {
       delete user.password;
       return user;
     });
@@ -20,9 +34,12 @@ export const getAllUsers = async (_, { user }) => {
   }
 
   try {
+    // Fetch all users
     const allUsers = await models.User.scan().exec();
     const users = allUsers.toJSON();
-    const usersWithoutPassword = users.map((user) => {
+    const usersWithOrg = await fetchUsersOrganization(users);
+
+    const usersWithoutPassword = usersWithOrg.map((user) => {
       delete user.password;
       return user;
     });

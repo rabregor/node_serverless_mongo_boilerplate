@@ -29,7 +29,10 @@ const registerUser = async ({ body }, { user }) => {
 
   try {
     await newUser.save();
-    return responses.created("user", newUser);
+    const userOrg = await models.Organization.get({ id: body.organization });
+    let response = newUser.toJSON();
+    response.organization = userOrg;
+    return responses.created("user", response);
   } catch (error) {
     return responses.internalError(error);
   }

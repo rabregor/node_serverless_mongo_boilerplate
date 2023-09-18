@@ -41,21 +41,22 @@ export const getAllFolders = async (_, { user }) => {
 export const getFolderById = async ({
   pathParameters: { id, organization },
 }) => {
+  console.log({ id, organization });
   const folder = await models.Folder.get({ organization, id });
   if (!folder) {
     return responses.notFound("Folder");
   }
   if (folder) {
     const requirements = await models.Requirement.query("folder")
+      .using("FolderIndex")
       .eq(folder.id)
       .exec();
-    if (requirements.length > 0) {
-      folder.requirements = requirements;
-    } else {
-      folder.requirements = [];
-    }
+    const files = await models.File.query("folder").eq(folder.id).exec();
+
+    folder.requirements = requirements.length > 0 ? requirements : [];
+    folder.files = files.length > 0 ? files : [];
+    return responses.success("folder", folder);
   }
-  return responses.success("folder", folder);
 };
 
 export const createFolder = async ({ body }) => {
