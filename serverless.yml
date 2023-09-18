@@ -18,6 +18,10 @@ provider:
     SECRET_KEY: ${env.SECRET_KEY}
     AWS_BUCKET_NAME: ${env.AWS_BUCKET_NAME}
 
+custom:
+  serverless-offline:
+    httpPort: 4000
+
 plugins:
   - serverless-dotenv-plugin
   - serverless-offline
@@ -367,6 +371,3 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: false
-custom:
-  serverless-offline:
-    httpPort: 4000
