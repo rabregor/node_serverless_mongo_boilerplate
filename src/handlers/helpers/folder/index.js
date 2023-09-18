@@ -8,6 +8,19 @@ export const getAllFolders = async (_, { user }) => {
       const orgFolders = await models.Folder.query("organization")
         .eq(user.organization)
         .exec();
+      if (orgFolders.length > 0) {
+        for (const folder of orgFolders) {
+          const requirements = await models.Requirement.query("folder")
+            .using("FolderIndex")
+            .eq(folder.id)
+            .exec();
+          if (requirements.length > 0) {
+            folder.requirements = requirements;
+          } else {
+            folder.requirements = [];
+          }
+        }
+      }
       return responses.success("folders", orgFolders);
     } catch (error) {
       console.error("Failed to query folders:", error);
@@ -41,7 +54,6 @@ export const getAllFolders = async (_, { user }) => {
 export const getFolderById = async ({
   pathParameters: { id, organization },
 }) => {
-  console.log({ id, organization });
   const folder = await models.Folder.get({ organization, id });
   if (!folder) {
     return responses.notFound("Folder");

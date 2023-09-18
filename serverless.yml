@@ -16,6 +16,7 @@ provider:
       Resource: "*" 
   environment:
     SECRET_KEY: ${env.SECRET_KEY}
+    AWS_BUCKET_NAME: ${env.AWS_BUCKET_NAME}
 
 plugins:
   - serverless-dotenv-plugin
