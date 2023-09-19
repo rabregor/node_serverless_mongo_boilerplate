@@ -5,6 +5,7 @@ const organizationSchema = new dynamoose.Schema(
   {
     id: String,
     name: String,
+    rfc: String,
   },
   {
     timestamps: true,

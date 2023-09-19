@@ -2,12 +2,13 @@ import * as models from "../../../models/index.js";
 import { createUUID } from "../../../utils/functions.js";
 import responses from "../../../utils/responses.js";
 
-const createOrganization = async ({ body: { name } }) => {
+const createOrganization = async ({ body: { name, rfc } }) => {
   if (!name) return responses.badRequest("name");
 
   const newOrganization = new models.Organization({
     id: createUUID(),
     name,
+    rfc,
   });
 
   try {
