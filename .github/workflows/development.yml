@@ -9,6 +9,7 @@ env:
   AWS_REGION: us-east-1 
   NODE_VERSION: 16.14.0
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
 
 jobs:
   deploy:

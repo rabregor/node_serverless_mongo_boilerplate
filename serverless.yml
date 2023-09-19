@@ -15,8 +15,8 @@ provider:
         - "dynamodb:*"  
       Resource: "*" 
   environment:
-    SECRET_KEY: ${env.SECRET_KEY}
-    AWS_BUCKET_NAME: ${env.AWS_BUCKET_NAME}
+    SECRET_KEY: ${env:SECRET_KEY}
+    AWS_BUCKET_NAME: ${env:AWS_BUCKET_NAME}
 
 custom:
   serverless-offline:
