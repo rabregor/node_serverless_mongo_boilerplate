@@ -63,9 +63,11 @@ export const createFile = async ({ body }, { user }) => {
     organization: folderObj.organization,
     path: path,
   });
+  folderObj.updateDate = new Date().toISOString();
 
   try {
     await newFile.save();
+    await folderObj.save();
     return responses.created("file", { file: newFile });
   } catch (error) {
     return responses.internalError(error);
