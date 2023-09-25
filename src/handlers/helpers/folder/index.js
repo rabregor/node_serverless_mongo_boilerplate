@@ -95,6 +95,7 @@ export const createFolder = async ({ body }) => {
     const {
       folder: { name, organization },
       requirements,
+      files,
     } = body;
     const folderId = createUUID();
 
@@ -118,6 +119,20 @@ export const createFolder = async ({ body }) => {
         await newRequirement.save();
       }
     }
+
+    if (files && Array.isArray(files)) {
+      for (const file of files) {
+        const fileId = createUUID();
+        const newFile = new models.File({
+          folder: folderId,
+          id: fileId,
+          organization,
+          ...file,
+        });
+        await newFile.save();
+      }
+    }
+
     return responses.created("folder", {
       folder: { ...newFolder, requirements },
     });
