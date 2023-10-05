@@ -5,6 +5,7 @@ import {
   createOrganization as generateOrganization,
   getAllOrganizations,
   getOrganizationById,
+  updateOrganization,
 } from "./helpers/organization/index.js";
 
 // All Users middleware
@@ -29,5 +30,11 @@ export const getOrganizationsHandler = middy(getOrganizations)
   .before(authenticateJWT);
 
 export const getOrganizationHandler = middy(getOrganization)
+  .use(httpJsonBodyParser())
+  .before(authenticateJWT);
+
+export const updateOrganizationHandler = middy(async (event, context) => {
+  return updateOrganization(event, context);
+})
   .use(httpJsonBodyParser())
   .before(authenticateJWT);

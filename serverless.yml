@@ -76,6 +76,22 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: false
+  updateOrganization:
+    handler: src/handlers/organization.updateOrganizationHandler
+    events:
+      - http:
+          path: organization/{id}
+          method: put
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
   # Users
   register:
     handler: src/handlers/authentication.registerHandler

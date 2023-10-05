@@ -35,4 +35,36 @@ const getOrganizationById = async ({ pathParameters: { id } }) => {
   return responses.success("organization", organization);
 };
 
-export { createOrganization, getOrganizationById, getAllOrganizations };
+const updateOrganization = async ({ pathParameters: { id }, body }) => {
+  try {
+    if (!id) {
+      return responses.badRequest("Missing organization id");
+    }
+    const { name, rfc } = body;
+
+    const organizationToUpdate = await models.Organization.get({
+      id,
+    });
+
+    if (!organizationToUpdate) {
+      return responses.notFound("Organization");
+    }
+
+    organizationToUpdate.name = name ?? organizationToUpdate.name;
+    organizationToUpdate.rfc = rfc ?? organizationToUpdate.rfc;
+
+    const updatedOrganization = await organizationToUpdate.save();
+
+    return responses.success("organization", updatedOrganization);
+  } catch (err) {
+    console.log(err);
+    return responses.internalError("Failed to update organization");
+  }
+};
+
+export {
+  createOrganization,
+  getOrganizationById,
+  getAllOrganizations,
+  updateOrganization,
+};
