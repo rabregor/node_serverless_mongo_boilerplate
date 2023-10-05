@@ -173,6 +173,22 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: false
+  updateUser:
+    handler: src/handlers/user.updateUserHandler
+    events:
+      - http:
+          path: users/{id}
+          method: put
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
   # Folders
   getAllFolders:
     handler: src/handlers/folder.getAllFoldersHandler

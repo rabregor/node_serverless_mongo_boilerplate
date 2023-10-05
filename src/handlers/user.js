@@ -5,6 +5,7 @@ import {
   getAllUsers,
   getUserById,
   getUserByToken,
+  updateUser,
 } from "./helpers/users/index.js";
 
 // All Users middleware
@@ -30,5 +31,11 @@ export const getUserByIdHandler = middy(baseGetUserByIdHandler)
   .before(authenticateJWT);
 
 export const getUserByTokenHandler = middy(baseGetUserByContextHandler)
+  .use(httpJsonBodyParser())
+  .before(authenticateJWT);
+
+export const updateUserHandler = middy(async (event, context) => {
+  return updateUser(event, context);
+})
   .use(httpJsonBodyParser())
   .before(authenticateJWT);

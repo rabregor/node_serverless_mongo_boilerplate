@@ -94,3 +94,34 @@ export const getUserByToken = async (_, { user }) => {
     return responses.internalError(error);
   }
 };
+
+export const updateUser = async ({ pathParameters: { id }, body }) => {
+  try {
+    if (!id) {
+      return responses.badRequest("Missing user id");
+    }
+    const { name, lastName, email, type, isEnterprise, organization } = body;
+
+    const userToUpdate = await models.User.get({
+      email: id,
+    });
+
+    if (!userToUpdate) {
+      return responses.notFound("User");
+    }
+
+    userToUpdate.name = name ?? userToUpdate.name;
+    userToUpdate.lastName = lastName ?? userToUpdate.lastName;
+    userToUpdate.type = type ?? userToUpdate.type;
+    userToUpdate.email = email ?? userToUpdate.email;
+    userToUpdate.isEnterprise = isEnterprise ?? userToUpdate.isEnterprise;
+    userToUpdate.organization = organization ?? userToUpdate.organization;
+
+    const updatedUser = await userToUpdate.save();
+
+    return responses.success("user", updatedUser);
+  } catch (err) {
+    console.log(err);
+    return responses.internalError("Failed to update user");
+  }
+};
