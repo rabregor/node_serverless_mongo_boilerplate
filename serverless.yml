@@ -44,6 +44,22 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: false
+  createOrganizationAndUser:
+    handler: src/handlers/organization.createOrganizationAndUserHandler
+    events:
+      - http:
+          path: organizationAndUser
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
   getOrganizationById:
     handler: src/handlers/organization.getOrganizationHandler
     events:

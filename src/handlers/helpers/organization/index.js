@@ -1,6 +1,7 @@
 import * as models from "../../../models/index.js";
 import { createUUID } from "../../../utils/functions.js";
 import responses from "../../../utils/responses.js";
+import bcrypt from "bcryptjs";
 
 const createOrganization = async ({ body: { name, rfc } }) => {
   if (!name) return responses.badRequest("name");
@@ -14,6 +15,68 @@ const createOrganization = async ({ body: { name, rfc } }) => {
   try {
     await newOrganization.save();
     return responses.created("organization", newOrganization);
+  } catch (error) {
+    return responses.internalError(error);
+  }
+};
+
+const createOrganizationAndUser = async ({
+  body: {
+    name,
+    lastName,
+    rfc,
+    email,
+    password,
+    taxOffice,
+    businessName,
+    numberOfEmployees,
+    address,
+  },
+}) => {
+  if (!businessName || !rfc || !numberOfEmployees) {
+    return responses.badRequest("Missing required fields");
+  }
+
+  const organizations = await models.Organization.scan().exec();
+  const existingOrganization = organizations.find((org) => org.rfc === rfc);
+  if (existingOrganization) {
+    return responses.internalError("RFC already registered");
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  try {
+    const newOrganization = new models.Organization({
+      id: createUUID(),
+      name: businessName,
+      rfc,
+      numberOfEmployees,
+      taxOffice: taxOffice === "Dispatch" ? true : false,
+      fiscalPostcode: address?.postcode,
+      fiscalStreet: address?.street,
+      fiscalExteriorNumber: address?.exteriorNumber,
+      fiscalColony: address?.colony,
+      fiscalCity: address?.city,
+      fiscalState: address?.state,
+      fiscalCountry: address?.country,
+    });
+    await newOrganization.save();
+
+    const newUser = new models.User({
+      email,
+      name,
+      lastName,
+      password: hashedPassword,
+      type: "client",
+      organization: newOrganization.id,
+    });
+    await newUser.save();
+
+    return responses.created("organization and user", {
+      organization: newOrganization,
+      user: newUser,
+    });
   } catch (error) {
     return responses.internalError(error);
   }
@@ -64,6 +127,7 @@ const updateOrganization = async ({ pathParameters: { id }, body }) => {
 
 export {
   createOrganization,
+  createOrganizationAndUser,
   getOrganizationById,
   getAllOrganizations,
   updateOrganization,

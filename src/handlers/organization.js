@@ -3,6 +3,7 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { authenticateJWT } from "../middlewares/auth.js";
 import {
   createOrganization as generateOrganization,
+  createOrganizationAndUser,
   getAllOrganizations,
   getOrganizationById,
   updateOrganization,
@@ -24,6 +25,10 @@ const getOrganization = async (event, context) => {
 export const createOrganizationHandler = middy(createOrganization)
   .use(httpJsonBodyParser())
   .before(authenticateJWT);
+
+export const createOrganizationAndUserHandler = middy(
+  createOrganizationAndUser,
+).use(httpJsonBodyParser());
 
 export const getOrganizationsHandler = middy(getOrganizations)
   .use(httpJsonBodyParser())
