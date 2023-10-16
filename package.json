@@ -5,10 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --exec 'serverless offline start'",
+    "dev": "nodemon --exec 'serverless offline start' --noTimeout",
     "deploy": "serverless deploy",
     "lint": "eslint --fix \"src/**/*.{js,jsx}\"",
-    "format": "prettier --write \"src/**/*.{js,jsx}\""
+    "format": "prettier --write \"src/**/*.{js,jsx}\"",
+    "db:seed": "node ./src/scripts/init.js"
   },
   "license": "MIT",
   "dependencies": {
@@ -26,6 +27,7 @@
     "graphql": "^16.8.1",
     "graphql-type-json": "^0.3.2",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.6.2",
     "serverless-dotenv-plugin": "^6.0.0"
   },
   "devDependencies": {
