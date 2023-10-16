@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { SECRET_KEY } from "../config/environment.js";
 import responses from "../utils/responses.js";
+import connectDB from "../utils/connect.js";
 
 export const authenticateJWT = async (request) => {
   const { headers } = request.event;
@@ -12,6 +13,7 @@ export const authenticateJWT = async (request) => {
   const [, receivedToken] = token.split(" ");
   try {
     const user = jwt.verify(receivedToken, SECRET_KEY);
+    await connectDB();
     request.context.user = user;
   } catch (error) {
     return responses.internalError(error);
