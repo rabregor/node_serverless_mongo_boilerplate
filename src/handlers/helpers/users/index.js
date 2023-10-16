@@ -5,7 +5,10 @@ const fetchUsersOrganization = async (users) => {
   const usersWithOrg = [];
   for (let user of users) {
     if (user.organization) {
-      const org = await models.Organization.get(user.organization);
+
+      // const org = await models.Organization.get(user.organization);
+      const org = await models.Organization.findById(user.organization);
+
       user.organization = org ? org.toJSON() : null;
       usersWithOrg.push(user);
     }
@@ -15,10 +18,14 @@ const fetchUsersOrganization = async (users) => {
 
 export const getAllUsers = async (_, { user }) => {
   if (user.type !== "admin") {
+    /*
     const orgUsers = await models.User.query("organization")
       .using("OrganizationIndex")
       .eq(user.organization)
       .exec();
+    */
+
+    const orgUsers = await models.User.find({organization: user.organization});
 
     if (!orgUsers) {
       return responses.notFound("Users");
@@ -35,7 +42,8 @@ export const getAllUsers = async (_, { user }) => {
 
   try {
     // Fetch all users
-    const allUsers = await models.User.scan().exec();
+    //const allUsers = await models.User.scan().exec();
+    const allUsers = await models.User.find({});
     const users = allUsers.toJSON();
     const usersWithOrg = await fetchUsersOrganization(users);
 
@@ -50,12 +58,14 @@ export const getAllUsers = async (_, { user }) => {
   }
 };
 
+// duda
 export const getUserById = async (
   { pathParameters: { id: userId } },
   { user },
 ) => {
   try {
-    const fetchedUser = await models.User.get(userId);
+    // const fetchedUser = await models.User.get(userId);
+    const fetchedUser = await models.User.findById(userId);
 
     if (
       user.type !== "admin" &&
@@ -83,8 +93,8 @@ export const getUserById = async (
 
 export const getUserByToken = async (_, { user }) => {
   try {
-    const fetchedUser = await models.User.get(user.email);
-
+    //const fetchedUser = await models.User.get(user.email);
+    const fetchedUser = await models.User.findOne({ email: user.email });
     if (!fetchedUser) {
       return responses.notFound("User");
     }
@@ -102,9 +112,13 @@ export const updateUser = async ({ pathParameters: { id }, body }) => {
     }
     const { name, lastName, email, type, isEnterprise, organization } = body;
 
+    /*
     const userToUpdate = await models.User.get({
       email: id,
     });
+    */
+
+    const userToUpdate = await models.User.findOne({ email: id });
 
     if (!userToUpdate) {
       return responses.notFound("User");

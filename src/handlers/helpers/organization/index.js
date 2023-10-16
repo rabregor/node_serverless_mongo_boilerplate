@@ -37,7 +37,9 @@ const createOrganizationAndUser = async ({
     return responses.badRequest("Missing required fields");
   }
 
-  const organizations = await models.Organization.scan().exec();
+  //const organizations = await models.Organization.scan().exec();
+  const organizations = await models.Organization.find({});
+
   const existingOrganization = organizations.find((org) => org.rfc === rfc);
   if (existingOrganization) {
     return responses.internalError("RFC already registered");
@@ -86,12 +88,18 @@ const getAllOrganizations = async (_, { user }) => {
   if (user.type !== "admin") {
     return responses.forbidden("You do not have access to this resource");
   }
-  const organizations = await models.Organization.scan().exec();
+
+  // const organizations = await models.Organization.scan().exec();
+  const organizations = await models.Organization.find({});
+
   return responses.success("organizations", organizations);
 };
 
 const getOrganizationById = async ({ pathParameters: { id } }) => {
-  const organization = await models.Organization.get({ id });
+  
+  //const organization = await models.Organization.get({ id });
+  const organization = await models.Organization.findById(id);
+  
   if (!organization) {
     return responses.notFound("Organization");
   }
@@ -105,10 +113,14 @@ const updateOrganization = async ({ pathParameters: { id }, body }) => {
     }
     const { name, rfc } = body;
 
+    /*
     const organizationToUpdate = await models.Organization.get({
       id,
     });
+    */
 
+    const organizationToUpdate = await models.Organization.findById(id);
+    
     if (!organizationToUpdate) {
       return responses.notFound("Organization");
     }

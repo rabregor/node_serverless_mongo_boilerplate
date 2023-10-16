@@ -5,24 +5,40 @@ import * as models from "../../../models/index.js";
 export const getAllFolders = async (_, { user }) => {
   if (user.type !== "admin") {
     try {
+      /*
       const orgFolders = await models.Folder.query("organization")
         .eq(user.organization)
         .exec();
+      */
+
+      const orgFolders = await models.Folder.find({ organization: user.organization });
+
       if (orgFolders.length > 0) {
         for (const folder of orgFolders) {
+          /*
           const requirements = await models.Requirement.query("folder")
             .using("FolderIndex")
             .eq(folder.id)
             .exec();
+          */
+         const requirements = await models.Requirement.find({ folder: folder.id });
+
           if (requirements.length > 0) {
             folder.requirements = requirements;
             for (const requirement of folder.requirements) {
               if (requirement.file !== "" && requirement.folder !== "") {
                 console.log(requirement.file, requirement.folder);
+                /*
                 const file = await models.File.get({
                   id: requirement.file,
                   folder: requirement.folder,
                 });
+                */
+                const file = await models.File.findOne({
+                  _id: requirement.file,
+                  folder: requirement.folder,
+                });
+
                 requirement.file = file ? file : null;
               }
             }
@@ -38,22 +54,34 @@ export const getAllFolders = async (_, { user }) => {
     }
   }
   try {
-    const folders = await models.Folder.scan().exec();
+    // const folders = await models.Folder.scan().exec();
+    const folders = await models.Folder.find({});
     if (folders.length > 0) {
       for (const folder of folders) {
+        /*
         const requirements = await models.Requirement.query("folder")
           .using("FolderIndex")
           .eq(folder.id)
           .exec();
+        */
+        const requirements = await models.Requirement.find({ folder: folder.id });
 
         if (requirements.length > 0) {
           folder.requirements = requirements;
           for (const requirement of folder.requirements) {
             if (requirement.file !== "" && requirement.folder !== "") {
+              /*
               const file = await models.File.get({
                 id: requirement.file,
                 folder: requirement.folder,
               });
+              */
+
+              const file = await models.File.findOne({
+                _id: requirement.file,
+                folder: requirement.folder,
+              });
+
               requirement.file = file ? file : null;
             }
           }
@@ -73,16 +101,25 @@ export const getAllFolders = async (_, { user }) => {
 export const getFolderById = async ({
   pathParameters: { id, organization },
 }) => {
-  const folder = await models.Folder.get({ organization, id });
+  
+  // const folder = await models.Folder.get({ organization, id });
+
+  const folder = await models.Folder.findOne({ id, organization });
+
   if (!folder) {
     return responses.notFound("Folder");
   }
   if (folder) {
+    /*
     const requirements = await models.Requirement.query("folder")
       .using("FolderIndex")
       .eq(folder.id)
       .exec();
-    const files = await models.File.query("folder").eq(folder.id).exec();
+    */
+    const requirements = await models.Requirement.find({ folder: folder.id});
+    
+    // const files = await models.File.query("folder").eq(folder.id).exec();
+    const files = await models.File.find({ folder: folder.id });
 
     folder.requirements = requirements.length > 0 ? requirements : [];
     folder.files = files.length > 0 ? files : [];
@@ -152,7 +189,8 @@ export const updateFolder = async ({
     }
     const { name, organization: updateOrg, status } = body;
 
-    const folderToUpdate = await models.Folder.get({ id, organization });
+    // const folderToUpdate = await models.Folder.get({ id, organization });
+    const folderToUpdate = await models.Folder.findOne({ id, organization });
 
     if (!folderToUpdate) {
       return responses.notFound("Folder");

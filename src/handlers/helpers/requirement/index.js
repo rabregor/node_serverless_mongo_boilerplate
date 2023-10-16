@@ -4,29 +4,50 @@ import * as models from "../../../models/index.js";
 
 export const getAllRequirements = async (_, { user }) => {
   if (user.type === "admin") {
-    const allRequirements = await models.Requirement.scan().exec();
+    
+    // const allRequirements = await models.Requirement.scan().exec();
+    const allRequirements = await models.Requirement.find({});
+
     for (const requirement of allRequirements) {
       if (requirement.file !== "" && requirement.folder !== "") {
+        /*
         const file = await models.File.get({
           id: requirement.file,
           folder: requirement.folder,
         });
+        */
+        const file = await models.File.findOne({
+          id: requirement.file,
+          folder: requirement.folder,
+        });
+
         requirement.file = file ? file : null;
       }
     }
     return responses.success("requirements", allRequirements);
   }
 
+  /*
   const requirements = await models.Requirement.query("organization")
     .eq(user.organization)
     .exec();
+  */
+
+  const requirements = await models.Requirement.findById(user.organization);
 
   for (const requirement of requirements) {
     if (requirement.file !== "" && requirement.folder !== "") {
+      /*
       const file = await models.File.get({
         id: requirement.file,
         folder: requirement.folder,
       });
+      */
+      const file = await models.File.findOne({
+        id: requirement.file,
+        folder: requirement.folder,
+      });
+
       requirement.file = file ? file : null;
     }
   }
@@ -38,7 +59,8 @@ export const getRequirementById = async (
   { pathParameters: { id, organization } },
   { user },
 ) => {
-  const requirement = await models.Requirement.get({ id, organization });
+  // const requirement = await models.Requirement.get({ id, organization });
+  const requirement = await models.Requirement.findOne({ id, organization });
 
   if (!requirement) {
     return responses.notFound("Requirement");
@@ -49,10 +71,14 @@ export const getRequirementById = async (
   }
 
   if (requirement.file !== "" && requirement.folder !== "") {
+    /*
     const file = await models.File.get({
       id: requirement.file,
       folder: requirement.folder,
     });
+    */
+    const file = await models.File.findOne({ id: requirement.file, folder: requirement.folder });
+
     requirement.file = file ? file : null;
   }
 
@@ -89,10 +115,14 @@ export const updateRequirement = async ({
   try {
     const { folder, requirement, status, file, organization: orgUpdate } = body;
 
+    /*
     const requirementToUpdate = await models.Requirement.get({
       id,
       organization,
     });
+    */
+
+    const requirementToUpdate = await models.Requirement.findOne({ id, organization });
 
     if (!requirementToUpdate) {
       return responses.notFound("Requirement");

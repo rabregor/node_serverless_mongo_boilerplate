@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import * as models from "../../../models/index.js";
 import { SECRET_KEY } from "../../../config/environment.js";
 import responses from "../../../utils/responses.js";
+import connectDB from "../../../utils/connect.js"
 
 const registerUser = async ({ body }, { user }) => {
   if (user.type !== "admin") {
@@ -12,7 +13,9 @@ const registerUser = async ({ body }, { user }) => {
   if (!body.organization || !body.email)
     return responses.badRequest("organization");
 
-  const existingUser = await models.User.query("email").eq(body.email).exec();
+  //const existingUser = await models.User.query("email").eq(body.email).exec();
+  const existingUser = await models.User.findOne({ email: body.email });
+
   if (existingUser.count > 0) {
     return responses.forbidden("User / email already exists!");
   }
@@ -29,7 +32,8 @@ const registerUser = async ({ body }, { user }) => {
 
   try {
     await newUser.save();
-    const userOrg = await models.Organization.get({ id: body.organization });
+    // const userOrg = await models.Organization.get({ id: body.organization });
+    const userOrg = await models.Organization.findById(body.organization);
     let response = newUser.toJSON();
     response.organization = userOrg;
     return responses.created("user", response);
@@ -39,10 +43,14 @@ const registerUser = async ({ body }, { user }) => {
 };
 
 const authenticateUser = async ({ body }) => {
+
   const { email, password } = body;
 
   try {
-    const user = await models.User.get({ email });
+    // const user = await models.User.get({ email });
+    await connectDB();
+    const user = await models.User.findOne({email});
+    console.log(user);
     if (!user) {
       return responses.notFound("User");
     }

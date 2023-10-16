@@ -4,17 +4,22 @@ import * as models from "../../../models/index.js";
 
 export const getAllFiles = async (_, { user }) => {
   if (user.type === "admin") {
-    const files = await models.File.scan().exec();
+    // const files = await models.File.scan().exec();
+    const files = await models.File.find({});
     if (!files.length) {
       return responses.success("files", []);
     }
     return responses.success("files", files);
   }
 
+  /*
   const orgFiles = await models.File.query("organization")
     .using("OrganizationIndex")
     .eq(user.organization)
     .exec();
+  */
+  const orgFiles = await models.File.find({ organization: user.organization });
+
   if (!orgFiles.length) {
     return responses.success("files", []);
   }
@@ -25,7 +30,8 @@ export const getFileById = async (
   { pathParameters: { id, folder } },
   { user },
 ) => {
-  const file = await models.File.get({ folder, id });
+  //const file = await models.File.get({ folder, id });
+  const file = await models.File.findOne({ id, folder });
 
   if (!file) {
     return responses.notFound("File");
@@ -44,7 +50,8 @@ export const createFile = async ({ body }, { user }) => {
   if (!path) {
     return responses.badRequest("S3 path is required");
   }
-  const [folderObj] = await models.Folder.scan("id").eq(folder).exec();
+  // const [folderObj] = await models.Folder.scan("id").eq(folder).exec();
+  const [folderObj] = await models.Folder.findById(folder);
 
   if (!folderObj) {
     return responses.notFound("Folder");
@@ -78,7 +85,8 @@ export const updateFile = async (
   { pathParameters: { id, folder }, body },
   { user },
 ) => {
-  const fileToUpdate = await models.File.get({ folder, id });
+  // const fileToUpdate = await models.File.get({ folder, id });
+  const fileToUpdate = await models.File.findOne({ id, folder });
 
   if (!fileToUpdate) {
     return responses.notFound("File");
