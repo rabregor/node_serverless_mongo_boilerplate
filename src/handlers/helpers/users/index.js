@@ -1,5 +1,6 @@
 import * as models from "../../../models/index.js";
 import responses from "../../../utils/responses.js";
+import { Types } from "mongoose";
 
 const fetchUsersOrganization = async (users) => {
   const usersWithOrg = [];
@@ -7,9 +8,9 @@ const fetchUsersOrganization = async (users) => {
     if (user.organization) {
 
       // const org = await models.Organization.get(user.organization);
-      const org = await models.Organization.findById(user.organization);
+      const org = await models.Organization.findById(new Types.ObjectId(user.organization));
 
-      user.organization = org ? org.toJSON() : null;
+      user.organization = String(org);
       usersWithOrg.push(user);
     }
   }
@@ -17,6 +18,7 @@ const fetchUsersOrganization = async (users) => {
 };
 
 export const getAllUsers = async (_, { user }) => {
+  
   if (user.type !== "admin") {
     /*
     const orgUsers = await models.User.query("organization")
@@ -25,13 +27,12 @@ export const getAllUsers = async (_, { user }) => {
       .exec();
     */
 
-    const orgUsers = await models.User.find({organization: user.organization});
+    const orgUsers = await models.User.find({organization: new Types.ObjectId(user.organization)});
 
     if (!orgUsers) {
       return responses.notFound("Users");
     }
-    const users = orgUsers.toJSON();
-    const usersWithOrg = await fetchUsersOrganization(users);
+    const usersWithOrg = await fetchUsersOrganization(orgUsers);
 
     const usersWithoutPassword = usersWithOrg.map((user) => {
       delete user.password;
@@ -44,8 +45,8 @@ export const getAllUsers = async (_, { user }) => {
     // Fetch all users
     //const allUsers = await models.User.scan().exec();
     const allUsers = await models.User.find({});
-    const users = allUsers.toJSON();
-    const usersWithOrg = await fetchUsersOrganization(users);
+
+    const usersWithOrg = await fetchUsersOrganization(allUsers);
 
     const usersWithoutPassword = usersWithOrg.map((user) => {
       delete user.password;
@@ -60,12 +61,12 @@ export const getAllUsers = async (_, { user }) => {
 
 // duda
 export const getUserById = async (
-  { pathParameters: { id: userId } },
+  { pathParameters: { id } },
   { user },
 ) => {
   try {
     // const fetchedUser = await models.User.get(userId);
-    const fetchedUser = await models.User.findById(userId);
+    const fetchedUser = await models.User.findById(new Types.ObjectId(id));
 
     if (
       user.type !== "admin" &&
@@ -86,7 +87,7 @@ export const getUserById = async (
     delete fetchedUser.password;
     return responses.success("user", fetchedUser);
   } catch (error) {
-    console.error(`Error fetching user by ID ${userId}:`, error);
+    console.error(`Error fetching user by ID ${id}:`, error);
     return responses.internalError(error);
   }
 };
@@ -94,7 +95,7 @@ export const getUserById = async (
 export const getUserByToken = async (_, { user }) => {
   try {
     //const fetchedUser = await models.User.get(user.email);
-    const fetchedUser = await models.User.findOne({ email: user.email });
+    const fetchedUser = await models.User.findById(new Types.ObjectId(user._id));
     if (!fetchedUser) {
       return responses.notFound("User");
     }
@@ -118,7 +119,7 @@ export const updateUser = async ({ pathParameters: { id }, body }) => {
     });
     */
 
-    const userToUpdate = await models.User.findOne({ email: id });
+    const userToUpdate = await models.User.findById(new Types.ObjectId(id));
 
     if (!userToUpdate) {
       return responses.notFound("User");

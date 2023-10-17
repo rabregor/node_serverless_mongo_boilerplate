@@ -1,6 +1,5 @@
 import * as models from "../models/index.js";
 import bcrypt from "bcryptjs";
-import { createUUID } from "../utils/functions.js";
 import connectDB from "../utils/connect.js"
 
 (async () => {
@@ -8,8 +7,17 @@ import connectDB from "../utils/connect.js"
     await connectDB();
     const rootOrg = new models.Organization({
       name: "NiPS",
+      rfc: "123",
+      numberOfEmployees: 1,
+      fiscalPostcode: "123",
+      fiscalStreet: "123",
+      fiscalExteriorNumber: "123",
+      fiscalColony: "123",
+      fiscalCity: "123",
+      fiscalState: "123",
+      fiscalCountry: "123",
     });
-    rootOrg.save();
+    await rootOrg.save();
   
     const pwd = "123";
     const salt = await bcrypt.genSalt(10);

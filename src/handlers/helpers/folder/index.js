@@ -1,6 +1,6 @@
-import { createUUID } from "../../../utils/functions.js";
 import responses from "../../../utils/responses.js";
 import * as models from "../../../models/index.js";
+import { Types } from "mongoose"; 
 
 export const getAllFolders = async (_, { user }) => {
   if (user.type !== "admin") {
@@ -11,7 +11,9 @@ export const getAllFolders = async (_, { user }) => {
         .exec();
       */
 
-      const orgFolders = await models.Folder.find({ organization: user.organization });
+      const orgFolders = await models.Folder.find({
+        organization: new Types.ObjectId(user.organization),
+      });
 
       if (orgFolders.length > 0) {
         for (const folder of orgFolders) {
@@ -21,13 +23,14 @@ export const getAllFolders = async (_, { user }) => {
             .eq(folder.id)
             .exec();
           */
-         const requirements = await models.Requirement.find({ folder: folder.id });
+         const requirements = await models.Requirement.find({
+          folder: new Types.ObjectId(folder._id),
+        });
 
           if (requirements.length > 0) {
             folder.requirements = requirements;
             for (const requirement of folder.requirements) {
               if (requirement.file !== "" && requirement.folder !== "") {
-                console.log(requirement.file, requirement.folder);
                 /*
                 const file = await models.File.get({
                   id: requirement.file,
@@ -35,8 +38,8 @@ export const getAllFolders = async (_, { user }) => {
                 });
                 */
                 const file = await models.File.findOne({
-                  _id: requirement.file,
-                  folder: requirement.folder,
+                  _id: new Types.ObjectId(requirement.file),
+                  folder: new Types.ObjectId(requirement.folder),
                 });
 
                 requirement.file = file ? file : null;
@@ -64,7 +67,9 @@ export const getAllFolders = async (_, { user }) => {
           .eq(folder.id)
           .exec();
         */
-        const requirements = await models.Requirement.find({ folder: folder.id });
+        const requirements = await models.Requirement.find({
+          folder: new Types.ObjectId(folder._id),
+        });
 
         if (requirements.length > 0) {
           folder.requirements = requirements;
@@ -78,8 +83,8 @@ export const getAllFolders = async (_, { user }) => {
               */
 
               const file = await models.File.findOne({
-                _id: requirement.file,
-                folder: requirement.folder,
+                _id: new Types.ObjectId(requirement.file),
+                folder: new Types.ObjectId(requirement.folder),
               });
 
               requirement.file = file ? file : null;
@@ -104,7 +109,10 @@ export const getFolderById = async ({
   
   // const folder = await models.Folder.get({ organization, id });
 
-  const folder = await models.Folder.findOne({ id, organization });
+  const folder = await models.Folder.findOne({
+    _id: new Types.ObjectId(id),
+    organization: new Types.ObjectId(organization),
+  });
 
   if (!folder) {
     return responses.notFound("Folder");
@@ -116,10 +124,14 @@ export const getFolderById = async ({
       .eq(folder.id)
       .exec();
     */
-    const requirements = await models.Requirement.find({ folder: folder.id});
+    const requirements = await models.Requirement.find({
+      folder: new Types.ObjectId(folder._id),
+    });
     
     // const files = await models.File.query("folder").eq(folder.id).exec();
-    const files = await models.File.find({ folder: folder.id });
+    const files = await models.File.find({
+      folder: new Types.ObjectId(folder._id),
+    });
 
     folder.requirements = requirements.length > 0 ? requirements : [];
     folder.files = files.length > 0 ? files : [];
@@ -130,26 +142,27 @@ export const getFolderById = async ({
 export const createFolder = async ({ body }) => {
   try {
     const {
-      folder: { name, organization },
+      folder: { name, organization, type, service, month },
       requirements,
       files,
     } = body;
-    const folderId = createUUID();
+    
+    //const folderId = createUUID();
 
     const newFolder = new models.Folder({
-      id: folderId,
       name,
       organization,
+      type,
+      service,
+      month,
     });
 
     await newFolder.save();
 
     if (requirements && Array.isArray(requirements)) {
       for (const req of requirements) {
-        const requirementId = createUUID();
         const newRequirement = new models.Requirement({
-          id: requirementId,
-          folder: folderId,
+          folder: newFolder._id,
           ...req,
           organization,
         });
@@ -159,10 +172,8 @@ export const createFolder = async ({ body }) => {
 
     if (files && Array.isArray(files)) {
       for (const file of files) {
-        const fileId = createUUID();
         const newFile = new models.File({
-          folder: folderId,
-          id: fileId,
+          folder: newFolder._id,
           organization,
           ...file,
         });
@@ -187,10 +198,13 @@ export const updateFolder = async ({
     if (!id) {
       return responses.badRequest("Missing folder id");
     }
-    const { name, organization: updateOrg, status } = body;
+    const { name, organization: updateOrg, type, service, month } = body;
 
     // const folderToUpdate = await models.Folder.get({ id, organization });
-    const folderToUpdate = await models.Folder.findOne({ id, organization });
+    const folderToUpdate = await models.Folder.findOne({
+      _id: new Types.ObjectId(id),
+      organization: new Types.ObjectId(organization),
+    });
 
     if (!folderToUpdate) {
       return responses.notFound("Folder");
@@ -198,7 +212,9 @@ export const updateFolder = async ({
 
     folderToUpdate.name = name ?? folderToUpdate.name;
     folderToUpdate.organization = updateOrg ?? folderToUpdate.organization;
-    folderToUpdate.status = status ?? folderToUpdate.status;
+    folderToUpdate.type = type ?? folderToUpdate.type;
+    folderToUpdate.service = service ?? folderToUpdate.service;
+    folderToUpdate.month = month ?? folderToUpdate.month;
 
     const updatedFolder = await folderToUpdate.save();
 

@@ -1,6 +1,6 @@
-import { createUUID } from "../../../utils/functions.js";
 import responses from "../../../utils/responses.js";
 import * as models from "../../../models/index.js";
+import { Types } from "mongoose";
 
 export const getAllRequirements = async (_, { user }) => {
   if (user.type === "admin") {
@@ -17,8 +17,8 @@ export const getAllRequirements = async (_, { user }) => {
         });
         */
         const file = await models.File.findOne({
-          id: requirement.file,
-          folder: requirement.folder,
+          _id: Types.ObjectId(requirement.file),
+          folder: Types.ObjectId(requirement.folder),
         });
 
         requirement.file = file ? file : null;
@@ -33,7 +33,9 @@ export const getAllRequirements = async (_, { user }) => {
     .exec();
   */
 
-  const requirements = await models.Requirement.findById(user.organization);
+  const requirements = await models.Requirement.find({
+    organization: Types.ObjectId(user.organization),
+  });
 
   for (const requirement of requirements) {
     if (requirement.file !== "" && requirement.folder !== "") {
@@ -44,8 +46,8 @@ export const getAllRequirements = async (_, { user }) => {
       });
       */
       const file = await models.File.findOne({
-        id: requirement.file,
-        folder: requirement.folder,
+        _id: Types.ObjectId(requirement.file),
+        folder: Types.ObjectId(requirement.folder),
       });
 
       requirement.file = file ? file : null;
@@ -60,7 +62,10 @@ export const getRequirementById = async (
   { user },
 ) => {
   // const requirement = await models.Requirement.get({ id, organization });
-  const requirement = await models.Requirement.findOne({ id, organization });
+  const requirement = await models.Requirement.findOne({
+    _id: Types.ObjectId(id),
+    organization: Types.ObjectId(organization),
+  });
 
   if (!requirement) {
     return responses.notFound("Requirement");
@@ -77,7 +82,10 @@ export const getRequirementById = async (
       folder: requirement.folder,
     });
     */
-    const file = await models.File.findOne({ id: requirement.file, folder: requirement.folder });
+    const file = await models.File.findOne({
+      _id: Types.ObjectId(requirement.file),
+      folder: Types.ObjectId(requirement.folder),
+    });
 
     requirement.file = file ? file : null;
   }
@@ -88,10 +96,8 @@ export const getRequirementById = async (
 export const createRequirement = async ({ body }) => {
   try {
     const { folder, requirement, status, file, organization } = body;
-    const requirementId = createUUID();
 
     const newRequirement = new models.Requirement({
-      id: requirementId,
       folder,
       requirement,
       status,
@@ -122,11 +128,14 @@ export const updateRequirement = async ({
     });
     */
 
-    const requirementToUpdate = await models.Requirement.findOne({ id, organization });
+    const requirementToUpdate = await models.Requirement.findOne({
+      _id: Types.ObjectId(id),
+      organization: Types.ObjectId(organization),
+    });
 
     if (!requirementToUpdate) {
       return responses.notFound("Requirement");
-    }
+    };
 
     requirementToUpdate.folder = folder ?? requirementToUpdate.folder;
     requirementToUpdate.requirement =

@@ -2,14 +2,36 @@ import { model, Schema } from "mongoose";
 
 const User = new Schema (
   {
-    email: { type: String, required: true },
-    name: { type: String, required: true },
-    lastName: { type: String, required: true },
-    password: { type: String, required: true},
-    type: { type: String, enum: ["client", "admin"], required: true },
-    isEnterprise: { type: Boolean, required: true },
-    organization: { type: Schema.Types.ObjectId, ref: "Organization", required: true },
+    email: { 
+      type: String,
+      required: true,
     },
+    name: { 
+      type: String,
+      required: true,
+    },
+    lastName: { 
+      type: String,
+      required: true,
+    },
+    password: { 
+      type: String,
+      required: true,
+    },
+    type: { 
+      type: String,
+      enum: ["client", "admin"],
+      required: true,
+    },
+    isEnterprise: { 
+      type: Boolean,
+      required: true
+    },
+    organization: {
+      type: String,
+      required: true 
+    },
+  },
   { timestamps: true, collection: "User" },
 )
 

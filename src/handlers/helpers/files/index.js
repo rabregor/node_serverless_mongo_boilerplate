@@ -1,6 +1,6 @@
-import { createUUID } from "../../../utils/functions.js";
 import responses from "../../../utils/responses.js";
 import * as models from "../../../models/index.js";
+import { Types } from "mongoose";
 
 export const getAllFiles = async (_, { user }) => {
   if (user.type === "admin") {
@@ -18,7 +18,7 @@ export const getAllFiles = async (_, { user }) => {
     .eq(user.organization)
     .exec();
   */
-  const orgFiles = await models.File.find({ organization: user.organization });
+  const orgFiles = await models.File.find({ organization: Types.ObjectId(user.organization)});
 
   if (!orgFiles.length) {
     return responses.success("files", []);
@@ -30,8 +30,12 @@ export const getFileById = async (
   { pathParameters: { id, folder } },
   { user },
 ) => {
+
   //const file = await models.File.get({ folder, id });
-  const file = await models.File.findOne({ id, folder });
+  const file = await models.File.findOne({
+    _id: new Types.ObjectId(id),
+    folder: new Types.ObjectId(folder),
+  });
 
   if (!file) {
     return responses.notFound("File");
@@ -45,13 +49,13 @@ export const getFileById = async (
 };
 
 export const createFile = async ({ body }, { user }) => {
-  const { name, type, folder, path } = body;
+  const { name, type, folder, path, service } = body;
 
   if (!path) {
     return responses.badRequest("S3 path is required");
   }
   // const [folderObj] = await models.Folder.scan("id").eq(folder).exec();
-  const [folderObj] = await models.Folder.findById(folder);
+  const folderObj = await models.Folder.findById(new Types.ObjectId(folder));
 
   if (!folderObj) {
     return responses.notFound("Folder");
@@ -61,16 +65,16 @@ export const createFile = async ({ body }, { user }) => {
     return responses.forbidden("You do not have access to this file");
   }
 
-  const id = createUUID();
-  const newFile = new models.File({
-    id,
+  const newFile = new models.File({ 
     name,
     type,
     folder,
-    organization: folderObj.organization,
-    path: path,
+    organization: String(folderObj.organization),
+    path,
+    createdBy: user._id,
+    service,
   });
-  folderObj.updateDate = new Date().toISOString();
+
 
   try {
     await newFile.save();
@@ -86,7 +90,10 @@ export const updateFile = async (
   { user },
 ) => {
   // const fileToUpdate = await models.File.get({ folder, id });
-  const fileToUpdate = await models.File.findOne({ id, folder });
+  const fileToUpdate = await models.File.findOne({
+    _id: new Types.ObjectId(id),
+    folder: new Types.ObjectId(folder),
+  });
 
   if (!fileToUpdate) {
     return responses.notFound("File");
