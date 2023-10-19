@@ -11,17 +11,13 @@ const awsConfig = {
   },
 };
 
-<<<<<<< HEAD
 const env = {
   development: process.env.NODE_ENV === "development",
   production: process.env.NODE_ENV === "production",
 };
 
-export { SECRET_KEY, awsConfig, env };
-=======
 const mongo = {
   url: process.env.MONGO_URI,
 };
 
-export { SECRET_KEY, awsConfig, mongo };
->>>>>>> f981086 (added mongo uri environment variable)
+export { SECRET_KEY, awsConfig, env, mongo };
