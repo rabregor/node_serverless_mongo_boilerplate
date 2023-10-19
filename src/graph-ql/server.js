@@ -1,6 +1,5 @@
 import { ApolloServer } from "@apollo/server";
 import { env } from "../config/environment.js";
-
 import context from "./context.js";
 import { flatten, paginate } from "./directives/index.js";
 import {
