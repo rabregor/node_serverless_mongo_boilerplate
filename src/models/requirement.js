@@ -18,7 +18,6 @@ const Requirement = new Schema(
     status: { 
       type: String,
       enum: ["created", "in_progress", "completed", "rejected"],
-      default: "created",
     },
     file: {
       type: Schema.Types.ObjectId,

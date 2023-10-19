@@ -1,0 +1,53 @@
+type Organization implements Timestamps {
+  id: ID!
+  name: String!
+  rfc: String!
+  numberOfEmployees: Int
+  fiscalPostcode: String!
+  fiscalStreet: String!
+  fiscalExteriorNumber: String!
+  fiscalColony: String!
+  fiscalCity: String!
+  fiscalState: String!
+  fiscalCountry: String!
+
+  # Interface required
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Organizations {
+  info: Info!
+  results: [Organization]!
+}
+
+type OrganizationAndUser {
+  organization: Organization!
+  user: User!
+}
+
+input OrganizationCreate {
+  name: String!
+  rfc: String!
+  numberOfEmployees: Int
+  fiscalPostcode: String!
+  fiscalStreet: String!
+  fiscalExteriorNumber: String!
+  fiscalColony: String!
+  fiscalCity: String!
+  fiscalState: String!
+  fiscalCountry: String!
+}
+
+input OrganizationUpdate {
+  name: String
+  rfc: String
+  numberOfEmployees: Int
+  fiscalPostcode: String
+  fiscalStreet: String
+  fiscalExteriorNumber: String
+  fiscalColony: String
+  fiscalCity: String
+  fiscalState: String
+  fiscalCountry: String
+}

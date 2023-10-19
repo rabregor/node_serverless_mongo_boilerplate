@@ -15,17 +15,27 @@
   "dependencies": {
     "@apollo/server": "^4.9.4",
     "@as-integrations/aws-lambda": "^3.1.0",
+<<<<<<< HEAD
     "@graphql-tools/schema": "^10.0.0",
     "@graphql-tools/utils": "^10.0.7",
+=======
+>>>>>>> db7a319 (added graphql type definitions)
     "@middy/core": "^4.6.2",
     "@middy/http-json-body-parser": "^4.6.2",
+    "apollo-server-express": "^3.12.1",
     "aws-sdk": "^2.1453.0",
     "bcryptjs": "^2.4.3",
     "dataloader": "^2.2.2",
     "dotenv": "^16.3.1",
     "dynamoose": "^3.2.1",
+<<<<<<< HEAD
     "graphql": "^16.8.1",
     "graphql-type-json": "^0.3.2",
+=======
+    "express": "^4.18.2",
+    "graphql": "^16.8.1",
+    "graphql-playground-middleware-express": "^1.7.23",
+>>>>>>> db7a319 (added graphql type definitions)
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.2",
     "serverless-dotenv-plugin": "^6.0.0"

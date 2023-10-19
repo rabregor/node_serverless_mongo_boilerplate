@@ -1,0 +1,41 @@
+type Requirement implements Timestamps {
+  id: ID!
+  organization: Organization!
+  folder: Folder!
+  requirement: String!
+  status: RequirementStatus!
+  file: File
+  
+  # Interface required
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Requirements {
+  info: Info!
+  results: [Requirement]!
+}
+
+input RequirementStatusInput {
+  type: RequirementStatus!
+}
+
+input RequirementCreate {
+  folder: ID!
+  requirement: String!
+  status: RequirementStatusInput!
+  file: ID!
+}
+
+input RequirementUpdate {
+  folder: ID
+  requirement: String
+  status: RequirementStatusInput
+  file: ID
+}
+
+enum RequirementStatus {
+  month
+  year
+}
+

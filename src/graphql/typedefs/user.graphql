@@ -1,0 +1,46 @@
+type User implements Timestamps {
+  id: ID!
+  email: String!
+  name: String!
+  lastName: String!
+  password: String!
+  userType: UserType!
+  isEnterprise: Boolean!
+  organization: Organization!
+
+  # Interface required
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Users {
+  info: Info!
+  results: [User]!
+}
+
+input UserTypeInput {
+  type: UserType!
+}
+
+input UserCreate {
+  email: String!
+  name: String!
+  lastName: String!
+  password: String!
+  userType: UserTypeInput!
+  isEnterprise: Boolean!
+}
+
+input UserUpdate {
+  email: String
+  name: String
+  lastName: String
+  password: String
+  userType: UserTypeInput
+  isEnterprise: Boolean
+}
+
+enum UserType {
+  client
+  admin
+}

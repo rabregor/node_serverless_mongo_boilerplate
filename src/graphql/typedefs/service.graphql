@@ -1,0 +1,46 @@
+type Service implements Timestamps {
+  id: ID!
+  step: Int!
+  status: String!
+  organization: String!
+  user: User!
+  type: ServiceType!
+  startDate: Date!
+  endDate: Date!
+  
+  # Interface required
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Services {
+  info: Info!
+  results: [Service]!
+}
+
+input ServiceTypeInput {
+  type: ServiceType!
+}
+
+input ServiceCreate {
+  step: Int!
+  status: String!
+  user: ID!
+  type: ServiceType!
+  startDate: Date!
+  endDate: Date!
+}
+
+input ServiceUpdate {
+  step: Int
+  status: String
+  user: ID
+  type: ServiceType
+  startDate: Date
+  endDate: Date
+}
+
+enum ServiceType {
+  month
+  year
+}

@@ -1,0 +1,40 @@
+type Folder implements Timestamps {
+  id: ID!
+  organization: Organization!
+  name: String!
+  type: FolderType
+  service: Service!
+  month: Date
+
+  # Interface required
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Folders {
+  info: Info!
+  results: [Folder]!
+}
+
+input FolderTypeInput {
+  type: FolderType!
+}
+
+input FolderCreate {
+  name: String!
+  type: FolderTypeInput!
+  service: ID!
+  month: Date
+}
+
+input FolderUpdate {
+  name: String
+  type: FolderTypeInput
+  service: ID
+  month: Date
+}
+
+enum FolderType {
+  nomina
+  mes
+}

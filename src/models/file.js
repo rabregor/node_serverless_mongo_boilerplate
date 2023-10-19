@@ -3,7 +3,8 @@ import { model, Schema } from "mongoose";
 const File = new Schema(
   {
     folder: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },  
     organization: {

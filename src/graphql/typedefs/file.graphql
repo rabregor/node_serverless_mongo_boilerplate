@@ -1,0 +1,40 @@
+type File implements Timestamps {
+  id: ID!
+  organization: Organization!
+  name: String!
+  path: String!
+  type: String!
+  createdBy: User!
+  deleted: Boolean
+  service: Service!
+  folder: Folder!
+
+  # Interface required
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Files {
+  info: Info!
+  results: [File]!
+}
+
+input FileCreate {
+  name: String!
+  path: String!
+  type: String!
+  createdBy: ID!
+  deleted: Boolean
+  service: ID!
+  folder: ID!
+}
+
+input FileUpdate {
+  name: String
+  path: String
+  type: String
+  createdBy: ID
+  deleted: Boolean
+  service: ID
+  folder: ID
+}
