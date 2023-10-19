@@ -1,47 +1,15 @@
-import dynamoose from "dynamoose";
-import { dynamoConfig } from "../utils/constants.js";
+import { model, Schema } from "mongoose";
 
-const fileSchema = new dynamoose.Schema(
+const File = new Schema(
   {
-    folder: {
-      type: String,
-      hashKey: true,
-    },
-    id: {
-      type: String,
-      rangeKey: true,
-    },
-    organization: {
-      type: String,
-      index: {
-        global: true,
-        name: "OrganizationIndex",
-        project: true,
-      },
-    },
-    name: String,
-    path: String,
-    type: String,
-    createdAt: Date,
-    updatedAt: Date,
-    createdBy: String,
-    deleted: Boolean,
+    folder: { type: Schema.Types.ObjectId, ref: "Folder", required: true },
+    organization: { type: String, required: true },
+    name: { type: String, required: true },
+    type: { type: String, required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    deleted: { type: Boolean, default: false },
   },
-  {
-    timestamps: {
-      createdAt: ["createDate", "creation"],
-      updatedAt: ["updateDate", "updated"],
-    },
-  },
-);
+  { timestamps: true, collection: "File" }
+)
 
-const options = {
-  create: true,
-  waitForActive: true,
-};
-
-export const File = dynamoose.model(
-  dynamoConfig.tables.file,
-  fileSchema,
-  options,
-);
+export default model("File", File);

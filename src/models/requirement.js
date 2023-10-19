@@ -1,41 +1,24 @@
-import dynamoose from "dynamoose";
-import { dynamoConfig } from "../utils/constants.js";
+import { model, Schema } from "mongoose";
 
-const requirementSchema = new dynamoose.Schema({
-  organization: {
-    type: String,
-    hashKey: true,
-  },
-  id: {
-    type: String,
-    rangeKey: true,
-  },
-  folder: {
-    type: String,
-    index: {
-      global: true,
-      name: "FolderIndex",
-      project: true,
+const Requirement = new Schema(
+  {
+    organization: { type: Schema.Types.ObjectId, ref: "Organization", required: true },
+    folder: { type: Schema.Types.ObjectId, ref: "Folder", required: true },
+    requirement: { type: String, required: true },
+    status: { 
+      type: String,
+      enum: ["created", "in_progress", "completed", "rejected"],
+      default: "created",
     },
-  },
-  requirement: String,
-  status: {
-    type: String,
-    enum: ["created", "in_progress", "completed", "rejected"],
-  },
-  file: {
-    type: String,
-    required: false,
-  },
-});
+    file: {
+      type: Schema.Types.ObjectId,
+      ref: "File",
+      required: false,
+      default: null,
+    }
 
-const options = {
-  create: true, // Create table in DB, if it does not exist,
-  waitForActive: true,
-};
+  },
+  { timestamps: true, collection: "Requirement" }
+)
 
-export const Requirement = dynamoose.model(
-  dynamoConfig.tables.requirement,
-  requirementSchema,
-  options,
-);
+export default model("Requirement", Requirement);

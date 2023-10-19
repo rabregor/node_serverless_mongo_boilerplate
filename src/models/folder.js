@@ -1,33 +1,11 @@
-import dynamoose from "dynamoose";
-import { dynamoConfig } from "../utils/constants.js";
+import { model, Schema } from "mongoose";
 
-const folderSchema = new dynamoose.Schema(
+const Folder = new Schema(
   {
-    organization: {
-      type: String,
-      hashKey: true,
-    },
-    id: {
-      type: String,
-      rangeKey: true,
-    },
-    name: String,
+    organization: { type: String, required: true },
+    name: { type: String, required: true },
   },
-  {
-    timestamps: {
-      createdAt: ["createDate", "creation"],
-      updatedAt: ["updateDate", "updated"],
-    },
-  },
-);
+  { timestamps: true, collection: "Folder" }
+)
 
-const options = {
-  create: true, // Create table in DB, if it does not exist,
-  waitForActive: true, // Wait for table to be created,
-};
-
-export const Folder = dynamoose.model(
-  dynamoConfig.tables.folder,
-  folderSchema,
-  options,
-);
+export default model("Folder", Folder);

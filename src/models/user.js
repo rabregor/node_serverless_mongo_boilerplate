@@ -1,44 +1,16 @@
-import dynamoose from "dynamoose";
-import { dynamoConfig } from "../utils/constants.js";
+import { model, Schema } from "mongoose";
 
-const userSchema = new dynamoose.Schema(
+const User = new Schema (
   {
-    email: {
-      type: String,
-      hashKey: true,
+    email: { type: String, required: true },
+    name: { type: String, required: true },
+    lastName: { type: String, required: true },
+    password: { type: String, required: true},
+    type: { type: String, enum: ["client", "admin"], required: true },
+    isEnterprise: { type: Boolean, required: true },
+    organization: { type: Schema.Types.ObjectId, ref: "Organization", required: true },
     },
-    name: String,
-    lastName: String,
-    password: String,
-    type: {
-      type: String,
-      enum: ["client", "admin"],
-    },
-    isEnterprise: Boolean,
-    organization: {
-      type: String,
-      index: {
-        global: true,
-        name: "OrganizationIndex",
-        project: true,
-      },
-    },
-  },
-  {
-    timestamps: {
-      createdAt: ["createDate", "creation"],
-      updatedAt: ["updateDate", "updated"],
-    },
-  },
-);
+  { timestamps: true, collection: "User" },
+)
 
-const options = {
-  create: true, // Create table in DB, if it does not exist,
-  waitForActive: true, // Wait for table to be created,
-};
-
-export const User = dynamoose.model(
-  dynamoConfig.tables.user,
-  userSchema,
-  options,
-);
+export default model("User", User);

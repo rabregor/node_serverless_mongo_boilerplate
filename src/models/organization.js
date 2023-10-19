@@ -1,32 +1,20 @@
-import dynamoose from "dynamoose";
-import { dynamoConfig } from "../utils/constants.js";
+import { model, Schema } from "mongoose";
 
-const organizationSchema = new dynamoose.Schema(
+const Organization = new Schema(
   {
-    id: String,
-    name: String,
-    rfc: String,
-    numberOfEmployees: String,
-    fiscalPostcode: String,
-    fiscalStreet: String,
-    fiscalExteriorNumber: String,
-    fiscalColony: String,
-    fiscalCity: String,
-    fiscalState: String,
-    fiscalCountry: String,
+    name: { type: String, required: true },
+    rfc: { type: String },
+    numberOfEmployees: { type: String },
+    fiscalPostcode: { type: String },
+    fiscalStreet: { type: String },
+    fiscalExteriorNumber: { type: String },
+    fiscalColony: { type: String },
+    fiscalCity: { type: String },
+    fiscalState: { type: String },
+    fiscalCountry: { type: String },
+    organization: { type: String },
   },
-  {
-    timestamps: true,
-  },
-);
+  { timestamps: true, collection: "Organization" }
+)
 
-const options = {
-  create: true, // Create table in DB, if it does not exist,
-  waitForActive: true, // Wait for table to be created,
-};
-
-export const Organization = dynamoose.model(
-  dynamoConfig.tables.organization,
-  organizationSchema,
-  options,
-);
+export default model("Organization", Organization);
