@@ -13,4 +13,9 @@ const awsConfig = {
   },
 };
 
-export { SECRET_KEY, awsConfig };
+const env = {
+  development: process.env.NODE_ENV === "development",
+  production: process.env.NODE_ENV === "production",
+};
+
+export { SECRET_KEY, awsConfig, env };

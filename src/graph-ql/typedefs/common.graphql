@@ -1,0 +1,48 @@
+# Interface
+interface Timestamps {
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+scalar JSON
+
+# Types
+type Info {
+  count: Int
+  pages: Int
+  next: Int
+  prev: Int
+}
+
+# Inputs
+input QueryParams {
+  pageSize: Int!
+  page: Int!
+}
+
+input QueryOperators {
+  exists: Boolean
+  eq: String
+  ne: String
+  in: [String]
+  nin: [String]
+}
+
+type LocationData {
+  codigo_postal: String
+  asentamiento: String
+  tipo_asentamiento: String
+  zona: String
+  municipio: String
+  estado: String
+  pais: String
+}
+
+type FetchLocationDataResponse {
+  mensaje: String
+  respuesta: LocationDataResult
+}
+
+type LocationDataResult {
+  codigos_postales: [LocationData]
+}

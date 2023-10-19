@@ -15,8 +15,8 @@ provider:
         - "dynamodb:*"  
       Resource: "*" 
   environment:
-    SECRET_KEY: ${env:SECRET_KEY}
-    AWS_BUCKET_NAME: ${env:AWS_BUCKET_NAME}
+    SECRET_KEY: ${env.SECRET_KEY}
+    AWS_BUCKET_NAME: ${env.AWS_BUCKET_NAME}
 
 custom:
   serverless-offline:
@@ -27,6 +27,16 @@ plugins:
   - serverless-offline
 
 functions:
+  # GRAPHQL
+  graphql:
+    handler: src/graph-ql/server.graphqlHandler
+    events:
+      - httpApi:
+          path: /
+          method: POST
+      - httpApi:
+          path: /
+          method: GET
   # Organizations
   createOrganization:
     handler: src/handlers/organization.createOrganizationHandler

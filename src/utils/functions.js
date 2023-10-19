@@ -11,4 +11,27 @@ function createUUID() {
   return uuid;
 }
 
-export { createUUID };
+/*
+  Turns this: { a: { b: "123" } }
+  into this: { "a.b": "123" }
+*/
+const flattenObject = (obj = {}, parent) => {
+  let res = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    const property = parent ? parent + "." + key : key;
+    const flattened = {};
+
+    if (value instanceof Date) {
+      flattened[key] = value.toISOString();
+    } else if (typeof value === "object" && value !== null) {
+      res = { ...res, ...flattenObject(value, property) };
+    } else {
+      res[property] = value;
+    }
+  }
+
+  return res;
+};
+
+export { createUUID, flattenObject };
