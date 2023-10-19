@@ -6,9 +6,10 @@ const fetchUsersOrganization = async (users) => {
   const usersWithOrg = [];
   for (let user of users) {
     if (user.organization) {
-
       // const org = await models.Organization.get(user.organization);
-      const org = await models.Organization.findById(new Types.ObjectId(user.organization));
+      const org = await models.Organization.findById(
+        new Types.ObjectId(user.organization),
+      );
 
       user.organization = String(org);
       usersWithOrg.push(user);
@@ -18,7 +19,6 @@ const fetchUsersOrganization = async (users) => {
 };
 
 export const getAllUsers = async (_, { user }) => {
-  
   if (user.type !== "admin") {
     /*
     const orgUsers = await models.User.query("organization")
@@ -27,7 +27,9 @@ export const getAllUsers = async (_, { user }) => {
       .exec();
     */
 
-    const orgUsers = await models.User.find({organization: new Types.ObjectId(user.organization)});
+    const orgUsers = await models.User.find({
+      organization: new Types.ObjectId(user.organization),
+    });
 
     if (!orgUsers) {
       return responses.notFound("Users");
@@ -60,10 +62,7 @@ export const getAllUsers = async (_, { user }) => {
 };
 
 // duda
-export const getUserById = async (
-  { pathParameters: { id } },
-  { user },
-) => {
+export const getUserById = async ({ pathParameters: { id } }, { user }) => {
   try {
     // const fetchedUser = await models.User.get(userId);
     const fetchedUser = await models.User.findById(new Types.ObjectId(id));
@@ -95,7 +94,9 @@ export const getUserById = async (
 export const getUserByToken = async (_, { user }) => {
   try {
     //const fetchedUser = await models.User.get(user.email);
-    const fetchedUser = await models.User.findById(new Types.ObjectId(user._id));
+    const fetchedUser = await models.User.findById(
+      new Types.ObjectId(user._id),
+    );
     if (!fetchedUser) {
       return responses.notFound("User");
     }

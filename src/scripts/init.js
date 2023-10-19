@@ -1,6 +1,6 @@
 import * as models from "../models/index.js";
 import bcrypt from "bcryptjs";
-import connectDB from "../utils/connect.js"
+import connectDB from "../utils/connect.js";
 
 (async () => {
   try {
@@ -18,11 +18,11 @@ import connectDB from "../utils/connect.js"
       fiscalCountry: "123",
     });
     await rootOrg.save();
-  
+
     const pwd = "123";
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(pwd, salt);
-  
+
     const newUser = new models.User({
       password: hashedPassword,
       email: "admin@nips.mx",
@@ -34,7 +34,7 @@ import connectDB from "../utils/connect.js"
     });
     await newUser.save();
     console.log("Root successful!");
-    return
+    return;
   } catch (error) {
     console.error(error);
   }

@@ -4,15 +4,15 @@ const Service = new Schema(
   {
     step: {
       type: Number,
-      required: true 
+      required: true,
     },
-    status: { 
+    status: {
       type: String,
-      required: true
+      required: true,
     },
     organization: {
       type: String,
-      required: true 
+      required: true,
     },
     user: {
       type: Schema.Types.ObjectId,
@@ -33,7 +33,7 @@ const Service = new Schema(
       required: true,
     },
   },
-  { timestamps: true, collection: "Service" }
-)
+  { timestamps: true, collection: "Service" },
+);
 
 export default model("Service", Service);

@@ -5,7 +5,7 @@ type Requirement implements Timestamps {
   requirement: String!
   status: RequirementStatus!
   file: File
-  
+
   # Interface required
   createdAt: Date!
   updatedAt: Date!
@@ -38,4 +38,3 @@ enum RequirementStatus {
   month
   year
 }
-

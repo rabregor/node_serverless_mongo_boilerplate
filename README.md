@@ -35,29 +35,29 @@ This is the serverless backend for NIPs, a file management service. The service 
 
 1. Clone the repository
 
-    ```bash
-    git clone https://github.com/your-repo/nips-backend.git
-    ```
+   ```bash
+   git clone https://github.com/your-repo/nips-backend.git
+   ```
 
 2. Navigate to the project directory
 
-    ```bash
-    cd nips-backend
-    ```
+   ```bash
+   cd nips-backend
+   ```
 
 3. Install dependencies using Yarn
 
-    ```bash
-    yarn install
-    ```
+   ```bash
+   yarn install
+   ```
 
 4. Set up your environment variables. Create a `.env` file at the root of the project and populate it as per `.env.example`.
 
 5. Start the local development server
 
-    ```bash
-    yarn dev
-    ```
+   ```bash
+   yarn dev
+   ```
 
 ## API Documentation
 
@@ -80,8 +80,9 @@ Authorization: Bearer <token>
 - **URL**: `/organization`
 - **Method**: `POST`
 - **Headers**: `Authorization`
-  
+
 **Sample Request Body**
+
 ```json
 {
   // Your fields here
@@ -89,6 +90,7 @@ Authorization: Bearer <token>
 ```
 
 **Sample Success Response**
+
 ```json
 {
   "message": "Created!",
@@ -107,6 +109,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Request Body**
+
 ```json
 {
   "email": "abdo@dropin.mx",
@@ -120,6 +123,7 @@ Authorization: Bearer <token>
 ```
 
 **Sample Success Response**
+
 ```json
 {
   "message": "Created!",
@@ -135,6 +139,7 @@ Authorization: Bearer <token>
 - **Method**: `POST`
 
 **Sample Request Body**
+
 ```json
 {
   "email": "user@example.com",
@@ -151,6 +156,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Success Response**
+
 ```json
 {
   "message": "Success!",
@@ -167,6 +173,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Request Body**
+
 ```json
 {
   "folder": {
@@ -195,6 +202,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Request Body**
+
 ```json
 {
   "folder": "folderId123",
@@ -214,6 +222,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Success Response**
+
 ```json
 {
   "message": "Success!",
@@ -230,6 +239,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Request Body**
+
 ```json
 {
   "requirement": "Foto ine",
@@ -240,6 +250,7 @@ Authorization: Bearer <token>
 ```
 
 **Sample Success Response**
+
 ```json
 {
   "message": "Created!",
@@ -256,6 +267,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Request Body**
+
 ```json
 {
   "requirement": "Foto ine",
@@ -274,6 +286,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Success Response**
+
 ```json
 {
   "message": "Success!",
@@ -290,6 +303,7 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Request Body**
+
 ```json
 {
   "file": "fileData",
@@ -298,6 +312,7 @@ Authorization: Bearer <token>
 ```
 
 **Sample Success Response**
+
 ```json
 {
   "message": "Created!",
@@ -314,13 +329,13 @@ Authorization: Bearer <token>
 - **Headers**: `Authorization`
 
 **Sample Request Body**
+
 ```json
 {
   "file": "newFileData",
   "organization": "org1"
 }
 ```
-
 
 ## Common Response Formats
 

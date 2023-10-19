@@ -4,7 +4,6 @@ import { Types } from "mongoose";
 
 export const getAllRequirements = async (_, { user }) => {
   if (user.type === "admin") {
-    
     // const allRequirements = await models.Requirement.scan().exec();
     const allRequirements = await models.Requirement.find({});
 
@@ -135,7 +134,7 @@ export const updateRequirement = async ({
 
     if (!requirementToUpdate) {
       return responses.notFound("Requirement");
-    };
+    }
 
     requirementToUpdate.folder = folder ?? requirementToUpdate.folder;
     requirementToUpdate.requirement =

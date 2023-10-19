@@ -2,7 +2,7 @@ import { model, Schema } from "mongoose";
 
 const Organization = new Schema(
   {
-    name: { 
+    name: {
       type: String,
       required: true,
     },
@@ -31,7 +31,7 @@ const Organization = new Schema(
       required: true,
     },
     fiscalCity: {
-      type: String, 
+      type: String,
       required: true,
     },
     fiscalState: {
@@ -43,7 +43,7 @@ const Organization = new Schema(
       required: true,
     },
   },
-  { timestamps: true, collection: "Organization" }
-)
+  { timestamps: true, collection: "Organization" },
+);
 
 export default model("Organization", Organization);

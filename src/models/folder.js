@@ -4,11 +4,11 @@ const Folder = new Schema(
   {
     organization: {
       type: String,
-      required: true 
+      required: true,
     },
-    name: { 
+    name: {
       type: String,
-      required: true
+      required: true,
     },
     type: {
       type: String,
@@ -23,9 +23,9 @@ const Folder = new Schema(
     month: {
       type: Date,
       required: true,
-    }
+    },
   },
-  { timestamps: true, collection: "Folder" }
-)
+  { timestamps: true, collection: "Folder" },
+);
 
 export default model("Folder", Folder);

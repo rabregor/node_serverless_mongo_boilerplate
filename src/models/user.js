@@ -1,38 +1,38 @@
 import { model, Schema } from "mongoose";
 
-const User = new Schema (
+const User = new Schema(
   {
-    email: { 
+    email: {
       type: String,
       required: true,
     },
-    name: { 
+    name: {
       type: String,
       required: true,
     },
-    lastName: { 
+    lastName: {
       type: String,
       required: true,
     },
-    password: { 
+    password: {
       type: String,
       required: true,
     },
-    type: { 
+    type: {
       type: String,
       enum: ["client", "admin"],
       required: true,
     },
-    isEnterprise: { 
+    isEnterprise: {
       type: Boolean,
-      required: true
+      required: true,
     },
     organization: {
       type: String,
-      required: true 
+      required: true,
     },
   },
   { timestamps: true, collection: "User" },
-)
+);
 
 export default model("User", User);

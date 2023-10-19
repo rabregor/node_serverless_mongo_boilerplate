@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  AWS_REGION: us-east-1 
+  AWS_REGION: us-east-1
   NODE_VERSION: 16.14.0
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
@@ -16,36 +16,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Setup Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: Install Yarn
-      run: npm install -g yarn
+      - name: Install Yarn
+        run: npm install -g yarn
 
-    - name: Install Serverless Framework
-      run: yarn global add serverless
+      - name: Install Serverless Framework
+        run: yarn global add serverless
 
-    - name: Install Dependencies
-      run: yarn install
+      - name: Install Dependencies
+        run: yarn install
 
-    # Add any testing or linting here
-    #- name: Run tests
-    #  run: yarn test
+      # Add any testing or linting here
+      #- name: Run tests
+      #  run: yarn test
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Deploy to AWS Lambda using Serverless Framework
-      run: yarn deploy
+      - name: Deploy to AWS Lambda using Serverless Framework
+        run: yarn deploy
 
-    - name: Show Deployment Info
-      run: echo "Deployment complete!"
+      - name: Show Deployment Info
+        run: echo "Deployment complete!"

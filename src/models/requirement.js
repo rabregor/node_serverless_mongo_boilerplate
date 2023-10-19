@@ -4,18 +4,18 @@ const Requirement = new Schema(
   {
     organization: {
       type: String,
-      required: true 
+      required: true,
     },
     folder: {
       type: Schema.Types.ObjectId,
       ref: "Folder",
-      required: true 
+      required: true,
     },
     requirement: {
       type: String,
-      required: true
+      required: true,
     },
-    status: { 
+    status: {
       type: String,
       enum: ["created", "in_progress", "completed", "rejected"],
     },
@@ -24,10 +24,9 @@ const Requirement = new Schema(
       ref: "File",
       required: false,
       default: null,
-    }
-    
+    },
   },
-  { timestamps: true, collection: "Requirement" }
-)
+  { timestamps: true, collection: "Requirement" },
+);
 
 export default model("Requirement", Requirement);

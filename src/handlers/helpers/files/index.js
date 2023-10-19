@@ -18,7 +18,9 @@ export const getAllFiles = async (_, { user }) => {
     .eq(user.organization)
     .exec();
   */
-  const orgFiles = await models.File.find({ organization: Types.ObjectId(user.organization)});
+  const orgFiles = await models.File.find({
+    organization: Types.ObjectId(user.organization),
+  });
 
   if (!orgFiles.length) {
     return responses.success("files", []);
@@ -30,7 +32,6 @@ export const getFileById = async (
   { pathParameters: { id, folder } },
   { user },
 ) => {
-
   //const file = await models.File.get({ folder, id });
   const file = await models.File.findOne({
     _id: new Types.ObjectId(id),
@@ -65,7 +66,7 @@ export const createFile = async ({ body }, { user }) => {
     return responses.forbidden("You do not have access to this file");
   }
 
-  const newFile = new models.File({ 
+  const newFile = new models.File({
     name,
     type,
     folder,
@@ -74,7 +75,6 @@ export const createFile = async ({ body }, { user }) => {
     createdBy: user._id,
     service,
   });
-
 
   try {
     await newFile.save();

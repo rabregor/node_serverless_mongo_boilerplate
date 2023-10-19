@@ -6,7 +6,7 @@ const File = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    },  
+    },
     organization: {
       type: String,
       required: true,
@@ -38,7 +38,7 @@ const File = new Schema(
       required: true,
     },
   },
-  { timestamps: true, collection: "File" }
-)
+  { timestamps: true, collection: "File" },
+);
 
 export default model("File", File);

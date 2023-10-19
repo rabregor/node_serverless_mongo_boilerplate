@@ -3,20 +3,20 @@ import responses from "../../../utils/responses.js";
 import bcrypt from "bcryptjs";
 import { Types } from "mongoose";
 
-const createOrganization = async ({ body: {
-  name,
-  rfc,
-  numberOfEmployees,
-  fiscalPostcode,
-  fiscalStreet,
-  fiscalExteriorNumber,
-  fiscalColony,
-  fiscalCity,
-  fiscalState,
-  fiscalCountry 
+const createOrganization = async ({
+  body: {
+    name,
+    rfc,
+    numberOfEmployees,
+    fiscalPostcode,
+    fiscalStreet,
+    fiscalExteriorNumber,
+    fiscalColony,
+    fiscalCity,
+    fiscalState,
+    fiscalCountry,
   },
 }) => {
-
   if (!name) return responses.badRequest("name");
 
   const newOrganization = new models.Organization({
@@ -115,10 +115,11 @@ const getAllOrganizations = async (_, { user }) => {
 };
 
 const getOrganizationById = async ({ pathParameters: { id } }) => {
-  
   //const organization = await models.Organization.get({ id });
-  const organization = await models.Organization.findById(new Types.ObjectId(id));
-  
+  const organization = await models.Organization.findById(
+    new Types.ObjectId(id),
+  );
+
   if (!organization) {
     return responses.notFound("Organization");
   }
@@ -140,8 +141,8 @@ const updateOrganization = async ({ pathParameters: { id }, body }) => {
       fiscalColony,
       fiscalCity,
       fiscalState,
-      fiscalCountry 
-      } = body;
+      fiscalCountry,
+    } = body;
 
     /*
     const organizationToUpdate = await models.Organization.get({
@@ -149,22 +150,32 @@ const updateOrganization = async ({ pathParameters: { id }, body }) => {
     });
     */
 
-    const organizationToUpdate = await models.Organization.findById(new Types.ObjectId(id));
-    
+    const organizationToUpdate = await models.Organization.findById(
+      new Types.ObjectId(id),
+    );
+
     if (!organizationToUpdate) {
       return responses.notFound("Organization");
     }
 
     organizationToUpdate.name = name ?? organizationToUpdate.name;
     organizationToUpdate.rfc = rfc ?? organizationToUpdate.rfc;
-    organizationToUpdate.numberOfEmployees = numberOfEmployees ?? organizationToUpdate.numberOfEmployees;
-    organizationToUpdate.fiscalPostcode = fiscalPostcode ?? organizationToUpdate.fiscalPostcode;
-    organizationToUpdate.fiscalStreet = fiscalStreet ?? organizationToUpdate.fiscalStreet;
-    organizationToUpdate.fiscalExteriorNumber = fiscalExteriorNumber ?? organizationToUpdate.fiscalExteriorNumber;
-    organizationToUpdate.fiscalColony = fiscalColony ?? organizationToUpdate.fiscalColony;
-    organizationToUpdate.fiscalCity = fiscalCity ?? organizationToUpdate.fiscalCity;
-    organizationToUpdate.fiscalState = fiscalState ?? organizationToUpdate.fiscalState;
-    organizationToUpdate.fiscalCountry = fiscalCountry ?? organizationToUpdate.fiscalCountry;
+    organizationToUpdate.numberOfEmployees =
+      numberOfEmployees ?? organizationToUpdate.numberOfEmployees;
+    organizationToUpdate.fiscalPostcode =
+      fiscalPostcode ?? organizationToUpdate.fiscalPostcode;
+    organizationToUpdate.fiscalStreet =
+      fiscalStreet ?? organizationToUpdate.fiscalStreet;
+    organizationToUpdate.fiscalExteriorNumber =
+      fiscalExteriorNumber ?? organizationToUpdate.fiscalExteriorNumber;
+    organizationToUpdate.fiscalColony =
+      fiscalColony ?? organizationToUpdate.fiscalColony;
+    organizationToUpdate.fiscalCity =
+      fiscalCity ?? organizationToUpdate.fiscalCity;
+    organizationToUpdate.fiscalState =
+      fiscalState ?? organizationToUpdate.fiscalState;
+    organizationToUpdate.fiscalCountry =
+      fiscalCountry ?? organizationToUpdate.fiscalCountry;
 
     const updatedOrganization = await organizationToUpdate.save();
 

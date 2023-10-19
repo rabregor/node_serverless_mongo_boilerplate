@@ -1,6 +1,6 @@
 import responses from "../../../utils/responses.js";
 import * as models from "../../../models/index.js";
-import { Types } from "mongoose"; 
+import { Types } from "mongoose";
 
 export const getAllFolders = async (_, { user }) => {
   if (user.type !== "admin") {
@@ -23,9 +23,9 @@ export const getAllFolders = async (_, { user }) => {
             .eq(folder.id)
             .exec();
           */
-         const requirements = await models.Requirement.find({
-          folder: new Types.ObjectId(folder._id),
-        });
+          const requirements = await models.Requirement.find({
+            folder: new Types.ObjectId(folder._id),
+          });
 
           if (requirements.length > 0) {
             folder.requirements = requirements;
@@ -106,7 +106,6 @@ export const getAllFolders = async (_, { user }) => {
 export const getFolderById = async ({
   pathParameters: { id, organization },
 }) => {
-  
   // const folder = await models.Folder.get({ organization, id });
 
   const folder = await models.Folder.findOne({
@@ -127,7 +126,7 @@ export const getFolderById = async ({
     const requirements = await models.Requirement.find({
       folder: new Types.ObjectId(folder._id),
     });
-    
+
     // const files = await models.File.query("folder").eq(folder.id).exec();
     const files = await models.File.find({
       folder: new Types.ObjectId(folder._id),
@@ -146,7 +145,7 @@ export const createFolder = async ({ body }) => {
       requirements,
       files,
     } = body;
-    
+
     //const folderId = createUUID();
 
     const newFolder = new models.Folder({

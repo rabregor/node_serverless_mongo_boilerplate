@@ -6,7 +6,7 @@ export const getAllServices = async (_, { user }) => {
   if (user.type === "admin") {
     const allServices = await models.Service.find({});
     return responses.success("services", allServices);
-  };
+  }
 
   const services = await models.Service.find({
     organization: Types.ObjectId(user.organization),
@@ -31,7 +31,7 @@ export const getServiceById = async (
   if (user.type !== "admin" && user.organization !== requirement.organization) {
     return responses.forbidden("You do not have access to this requirement");
   }
-  
+
   return responses.success("service", service);
 };
 
@@ -63,11 +63,19 @@ export const updateService = async ({
   pathParameters: { id, organization },
 }) => {
   try {
-    const { step, status, organization: orgUpdate, user, type, startDate, endDate } = body;
+    const {
+      step,
+      status,
+      organization: orgUpdate,
+      user,
+      type,
+      startDate,
+      endDate,
+    } = body;
 
     const serviceToUpdate = await models.Service.findOne({
-        _id: Types.ObjectId(id),
-        organization: Types.ObjectId(organization),
+      _id: Types.ObjectId(id),
+      organization: Types.ObjectId(organization),
     });
 
     if (!serviceToUpdate) {
