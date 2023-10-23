@@ -10,7 +10,6 @@ const connectDB = async () => {
   try {
     db = await mongoose.connect(mongo.url, mongoOptions);
     isConnected = db.connections[0].readyState;
-    console.log("disconnected");
     return db;
   } catch (err) {
     throw new Error(err);

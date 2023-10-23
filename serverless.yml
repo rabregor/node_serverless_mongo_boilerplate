@@ -3,6 +3,8 @@ service: NiPS-backend
 provider:
   name: aws
   runtime: nodejs16.x
+  httpApi:
+    cors: true
   stage: dev
   region: us-east-1
   iamRoleStatements:
@@ -17,7 +19,9 @@ provider:
   environment:
     SECRET_KEY: ${env.SECRET_KEY}
     AWS_BUCKET_NAME: ${env.AWS_BUCKET_NAME}
-
+    MONGO_URI: ${env.MONGO_URI}
+    NODE_ENV: ${env.NODE_ENV}
+    
 custom:
   serverless-offline:
     httpPort: 4000
@@ -32,10 +36,10 @@ functions:
     handler: src/graph-ql/server.graphqlHandler
     events:
       - httpApi:
-          path: /
+          path: /graphql
           method: POST
       - httpApi:
-          path: /
+          path: /graphql
           method: GET
   # Organizations
   createOrganization:

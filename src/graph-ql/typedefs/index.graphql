@@ -1,80 +1,19 @@
-# Directives
-directive @paginate on FIELD_DEFINITION
-directive @flatten on FIELD_DEFINITION # Only use flatten when a search argument is provided.
+# Custom Scalars
+scalar JSON
+scalar Date
+
 type Query {
   # Users
   users(
     params: QueryParams
     organization: QueryOperators
     userType: QueryOperators
-  ): Users! @paginate @flatten
+  ): Users! 
   user(id: ID!): User
-
-  # Services
-  services(
-    params: QueryParams
-    organization: QueryOperators
-    userType: QueryOperators
-  ): Services! @paginate @flatten
-  service(id: ID!): Service
-
-  # Requirements
-  requirements(
-    params: QueryParams
-    organization: QueryOperators
-    userType: QueryOperators
-  ): Requirements! @paginate @flatten
-  requirement(id: ID!): Requirement
-
-  # Organizations
-  organizations(params: QueryParams, userType: QueryOperators): Organizations!
-    @paginate
-    @flatten
-  organization(id: ID!): Organization
-
-  # Folders
-  folders(
-    params: QueryParams
-    organization: QueryOperators
-    userType: QueryOperators
-  ): Folders! @paginate @flatten
-  folder(id: ID!): Folder
-
-  # Files
-  files(
-    params: QueryParams
-    organization: QueryOperators
-    userType: QueryOperators
-  ): Files! @paginate @flatten
-  file(id: ID!): File
 }
 
 type Mutation {
   # Users
   createUser(user: UserCreate!): User!
   updateUser(id: ID!, user: UserUpdate!): User!
-
-  # Services
-  createService(service: ServiceCreate!): Service!
-  updateService(id: ID!, service: ServiceUpdate!): Service!
-
-  # Requirements
-  createRequirement(user: RequirementCreate!): Requirement!
-  updateRequirement(id: ID!, user: RequirementUpdate!): Requirement!
-
-  # Organizations
-  createOrganization(organization: OrganizationCreate!): Organization!
-  createOrganizationAndUser(
-    organization: OrganizationCreate!
-    user: UserCreate!
-  ): OrganizationAndUser!
-  updateOrganization(id: ID!, organization: OrganizationUpdate!): Organization!
-
-  # Folders
-  createFolder(folder: FolderCreate!): Folder!
-  updateFolder(id: ID!, folder: FolderUpdate!): Folder!
-
-  # Files
-  createFile(file: FileCreate!): File!
-  updateFile(id: ID!, file: FileUpdate!): File!
 }

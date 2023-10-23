@@ -1,57 +1,59 @@
 import fs from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 import GraphQLJSON from "graphql-type-json";
 
-let resolvers = {
-  JSON: GraphQLJSON,
-  Query: {},
-  Mutation: {},
-};
+async function loadResolvers(baseDir) {
+  let resolvers = {
+    JSON: GraphQLJSON,
+    Query: {},
+    Mutation: {},
+  };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-async function loadResolvers(dir) {
   const imports = [];
-  fs.readdirSync(dir).forEach((file) => {
-    const path = join(dir, file);
-    if (fs.statSync(path).isDirectory()) {
-      return loadResolvers(path);
-    } else {
-      let resolversAt = undefined;
+  try {
+    for (const file of fs.readdirSync(baseDir)) {
+      const path = join(baseDir, file);
+      if (fs.statSync(path).isDirectory() && path.includes("/resolvers")) {
+        const nestedResolvers = await loadResolvers(path);
+        resolvers.Query = { ...resolvers.Query, ...nestedResolvers.Query };
+        resolvers.Mutation = {
+          ...resolvers.Mutation,
+          ...nestedResolvers.Mutation,
+        };
+      } else if (baseDir.includes("/resolvers")) {
+        let resolversAt = undefined;
 
-      if (path.endsWith("queries.js")) resolversAt = "Query";
-      if (path.endsWith("mutations.js")) resolversAt = "Mutation";
-      if (path.endsWith("test.js")) return;
+        if (path.endsWith("queries.js")) resolversAt = "Query";
+        if (path.endsWith("mutations.js")) resolversAt = "Mutation";
+        if (path.endsWith("test.js")) continue; // Use 'continue' instead of 'return' in loops
 
-      if (resolversAt) {
-        imports.push(
-          import(path).then((module) => {
-            resolvers[resolversAt] = {
-              ...module.default,
-              ...resolvers[resolversAt],
-            };
-          }),
-        );
-      } else {
-        imports.push(
-          import(path).then((module) => {
-            resolvers = {
-              ...module.default,
-              ...resolvers,
-            };
-          }),
-        );
+        if (resolversAt) {
+          imports.push(
+            import(path).then((module) => {
+              resolvers[resolversAt] = {
+                ...resolvers[resolversAt],
+                ...module.default,
+              };
+            }),
+          );
+        } else {
+          imports.push(
+            import(path).then((module) => {
+              resolvers = {
+                ...resolvers,
+                ...module.default,
+              };
+            }),
+          );
+        }
       }
     }
-  });
-  await Promise.all(imports);
+
+    await Promise.all(imports);
+    return resolvers;
+  } catch (err) {
+    console.log("Error loading resolvers: ", err);
+  }
 }
 
-// Use an IIFE to call the async function
-(async () => {
-  await loadResolvers(__dirname);
-})();
-
-export default resolvers;
+export { loadResolvers };

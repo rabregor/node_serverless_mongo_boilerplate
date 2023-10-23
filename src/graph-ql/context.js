@@ -22,12 +22,13 @@ const context = async ({ req = {}, connection }) => {
   if (authorization) [, token] = authorization.split("Bearer ");
   if (!token)
     throw new Error("GraphQL API is only accessible with an access token");
-
-  const user = jwt.verify(token, SECRET_KEY);
-
-  const queryArgs = contextQueryArgs(user?.organization);
-
-  return { user, queryArgs, loaders };
+  try {
+    const user = jwt.verify(token, SECRET_KEY);
+    const queryArgs = contextQueryArgs(user?.organization);
+    return { user, queryArgs, loaders };
+  } catch (err) {
+    console.error("Error verifying token in context.js: ", err);
+  }
 };
 
 export default context;

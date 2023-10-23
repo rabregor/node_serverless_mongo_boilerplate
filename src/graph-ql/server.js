@@ -1,47 +1,34 @@
+// main.js
 import { ApolloServer } from "@apollo/server";
-import { env } from "../config/environment.js";
 import context from "./context.js";
 import { flatten, paginate } from "./directives/index.js";
 import {
   startServerAndCreateLambdaHandler,
   handlers,
 } from "@as-integrations/aws-lambda";
+import { createSchema } from "./schema.js";
 
-const playgroundSettings = {
-  settings: {
-    "editor.theme": "dark",
-    "request.credentials": "include",
-    "schema.polling.enable": false,
-  },
-};
+async function initialize() {
+  const schema = await createSchema();
+  const server = new ApolloServer({
+    schema,
+    context,
+    playground: {
+      endpoint: "/graphql",
+    },
+  });
+  return server;
+}
 
-// The GraphQL schema
+let serverInstance;
 
-const typeDefs = `#graphql
-
-  type Query {
-
-    hello: String
-
+export async function getHandler() {
+  if (!serverInstance) {
+    serverInstance = await initialize();
   }
 
-`;
-
-// A map of functions which return data for the schema.
-
-const resolvers = {
-  Query: {
-    hello: () => "world",
-  },
-};
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
-
-export const graphqlHandler = startServerAndCreateLambdaHandler(
-  server,
-  // We will be using the Proxy V2 handler
-  handlers.createAPIGatewayProxyEventV2RequestHandler(),
-);
+  return startServerAndCreateLambdaHandler(
+    serverInstance,
+    handlers.createAPIGatewayProxyEventV2RequestHandler(),
+  );
+}

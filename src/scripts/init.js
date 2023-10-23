@@ -1,4 +1,4 @@
-import * as models from "../models/index.js";
+import models from "../models/index.js";
 import bcrypt from "bcryptjs";
 import connectDB from "../utils/connect.js";
 

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import * as models from "../../../models/index.js";
+import models from "../../../models/index.js";
 import { SECRET_KEY } from "../../../config/environment.js";
 import responses from "../../../utils/responses.js";
 import connectDB from "../../../utils/connect.js";
@@ -47,12 +47,11 @@ const registerUser = async ({ body }, { user }) => {
 
 const authenticateUser = async ({ body }) => {
   const { email, password } = body;
-
   try {
     // const user = await models.User.get({ email });
     await connectDB();
     const user = await models.User.findOne({ email });
-
+    console.log({ user });
     if (!user) {
       return responses.notFound("User");
     }
@@ -67,7 +66,7 @@ const authenticateUser = async ({ body }) => {
       organization: user.organization,
       type: user.type,
     };
-
+    console.log({ payload });
     // Generate JWT
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
     return responses.success("token", token, { user: payload });
