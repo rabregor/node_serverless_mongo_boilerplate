@@ -1,5 +1,5 @@
 import { ApolloServer } from "@apollo/server";
-import context from "./context.js";
+import customContext from "./context.js";
 import { createSchema } from "./schema.js";
 import {
   startServerAndCreateLambdaHandler,
@@ -22,10 +22,6 @@ const schema = createSchema();
 const server = new ApolloServer({
   schema,
   schemaDirectives: { paginate, flatten },
-  context: async () => {
-    await establishConnection();
-    return context();
-  },
   playground:
     process.env.NODE_ENV !== "production"
       ? {
@@ -37,4 +33,22 @@ const server = new ApolloServer({
 export const graphqlHandler = startServerAndCreateLambdaHandler(
   server,
   handlers.createAPIGatewayProxyEventV2RequestHandler(),
+  {
+    context: async ({ event, context }) => {
+      await establishConnection();
+
+      // Use the custom context generation
+      const apolloContext = await customContext({
+        req: event,
+        // Add connection if relevant
+      });
+
+      // Merge with any other context info if needed
+      return {
+        ...apolloContext,
+        ...context,
+        // ... any other context data ...
+      };
+    },
+  },
 );

@@ -12,8 +12,8 @@ type Query {
     params: QueryParams
     organization: QueryOperators
     userType: QueryOperators
-  ): Users! 
-  user(id: ID!): User @paginate @flatten
+  ): Users!  @paginate 
+  user(id: ID!): User
 }
 
 type Mutation {

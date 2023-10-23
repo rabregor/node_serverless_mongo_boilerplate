@@ -2,10 +2,16 @@ import models from "../../../models/index.js";
 import { buildQuery } from "../../../utils/builders.js";
 
 const userQueries = {
-  users: async (_, { params = { page: 1, pageSize: 20 }, ...args }) => {
+  users: async (
+    _,
+    { params = { page: 1, pageSize: 20 }, ...args },
+    { loaders, queryArgs },
+  ) => {
     const { pageSize, page } = params;
-
-    let query = {};
+    console.log("triggered");
+    let query = {
+      ...queryArgs,
+    };
 
     if (args?.userType != undefined) {
       query = {
@@ -20,14 +26,11 @@ const userQueries = {
         .limit(pageSize),
       models.User.countDocuments(),
     ]);
-
     return {
-      results: results.map((result) => {
-        return {
-          ...result._doc,
-          id: result._id,
-        };
-      }),
+      results: loaders.user.many(
+        results.map(({ id }) => id),
+        loaders,
+      ),
       count,
       params,
     };

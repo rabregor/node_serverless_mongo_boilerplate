@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import models from "../../../models/index.js";
 import { SECRET_KEY } from "../../../config/environment.js";
 import responses from "../../../utils/responses.js";
-import connectDB from "../../../utils/connect.js";
+import connectDB from "../../../scripts/connect.js";
 import { Types } from "mongoose";
 
 const registerUser = async ({ body }, { user }) => {
