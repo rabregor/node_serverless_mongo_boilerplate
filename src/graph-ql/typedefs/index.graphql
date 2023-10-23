@@ -2,6 +2,10 @@
 scalar JSON
 scalar Date
 
+# Directives
+directive @paginate on FIELD_DEFINITION
+directive @flatten on FIELD_DEFINITION # Only use flatten when a search argument is provided.
+
 type Query {
   # Users
   users(
@@ -9,7 +13,7 @@ type Query {
     organization: QueryOperators
     userType: QueryOperators
   ): Users! 
-  user(id: ID!): User
+  user(id: ID!): User @paginate @flatten
 }
 
 type Mutation {

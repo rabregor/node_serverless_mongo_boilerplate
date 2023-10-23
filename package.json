@@ -5,11 +5,15 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "generate:resolvers": "node ./src/scripts/generateResolvers.js",
+    "format:resolvers": "prettier --write \"./src/graph-ql/resolvers/index.js\"",
     "dev": "nodemon --exec 'serverless offline start' --noTimeout",
+    "start": "yarn generate:resolvers && yarn format:resolvers && yarn dev",
     "deploy": "serverless deploy",
     "lint": "eslint --fix \"src/**/*.{js,jsx}\"",
-    "format": "prettier --write \"src/**/*.{js,jsx}\"",
-    "db:seed": "node ./src/scripts/init.js"
+    "format": "prettier --write \"./src/**/*.{js,jsx}\"",
+    "db:seed": "node ./src/scripts/init.js",
+    "db:connect": "node ./src/scripts/connect.js"
   },
   "license": "MIT",
   "dependencies": {

@@ -1,59 +1,11 @@
-import fs from "fs";
-import { join } from "path";
-import GraphQLJSON from "graphql-type-json";
+import * as users_mutations from "./users/mutations.js";
+import * as users_queries from "./users/queries.js";
 
-async function loadResolvers(baseDir) {
-  let resolvers = {
-    JSON: GraphQLJSON,
-    Query: {},
-    Mutation: {},
-  };
-
-  const imports = [];
-  try {
-    for (const file of fs.readdirSync(baseDir)) {
-      const path = join(baseDir, file);
-      if (fs.statSync(path).isDirectory() && path.includes("/resolvers")) {
-        const nestedResolvers = await loadResolvers(path);
-        resolvers.Query = { ...resolvers.Query, ...nestedResolvers.Query };
-        resolvers.Mutation = {
-          ...resolvers.Mutation,
-          ...nestedResolvers.Mutation,
-        };
-      } else if (baseDir.includes("/resolvers")) {
-        let resolversAt = undefined;
-
-        if (path.endsWith("queries.js")) resolversAt = "Query";
-        if (path.endsWith("mutations.js")) resolversAt = "Mutation";
-        if (path.endsWith("test.js")) continue; // Use 'continue' instead of 'return' in loops
-
-        if (resolversAt) {
-          imports.push(
-            import(path).then((module) => {
-              resolvers[resolversAt] = {
-                ...resolvers[resolversAt],
-                ...module.default,
-              };
-            }),
-          );
-        } else {
-          imports.push(
-            import(path).then((module) => {
-              resolvers = {
-                ...resolvers,
-                ...module.default,
-              };
-            }),
-          );
-        }
-      }
-    }
-
-    await Promise.all(imports);
-    return resolvers;
-  } catch (err) {
-    console.log("Error loading resolvers: ", err);
-  }
-}
-
-export { loadResolvers };
+export const resolvers = {
+  Query: {
+    ...users_queries.default,
+  },
+  Mutation: {
+    ...users_mutations.default,
+  },
+};

@@ -2,7 +2,7 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { readdirSync, readFileSync } from "fs";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { loadResolvers } from "./resolvers/index.js";
+import { resolvers } from "./resolvers/index.js";
 import { flatten, paginate } from "./directives/index.js";
 
 // Get the equivalent of __dirname in ES module
@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 let schema;
 
-export async function createSchema() {
+export function createSchema() {
   if (!schema) {
     // Read the gql files
     const gqlFiles = readdirSync(join(__dirname, "./typedefs"));
@@ -22,8 +22,6 @@ export async function createSchema() {
         encoding: "utf8",
       });
     });
-    const resolvers = await loadResolvers(__dirname);
-    //console.log({ resolvers, typeDefs });
     // Create the schema with type definitions and resolvers
     schema = makeExecutableSchema({
       typeDefs,

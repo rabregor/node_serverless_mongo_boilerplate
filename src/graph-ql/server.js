@@ -1,34 +1,40 @@
-// main.js
 import { ApolloServer } from "@apollo/server";
 import context from "./context.js";
-import { flatten, paginate } from "./directives/index.js";
+import { createSchema } from "./schema.js";
 import {
   startServerAndCreateLambdaHandler,
   handlers,
 } from "@as-integrations/aws-lambda";
-import { createSchema } from "./schema.js";
-
-async function initialize() {
-  const schema = await createSchema();
-  const server = new ApolloServer({
-    schema,
-    context,
-    playground: {
-      endpoint: "/graphql",
-    },
-  });
-  return server;
-}
-
-let serverInstance;
-
-export async function getHandler() {
-  if (!serverInstance) {
-    serverInstance = await initialize();
+import connectDB from "../scripts/connect.js"; // Import your database connection function
+import { paginate, flatten } from "./directives/index.js";
+// Ensure a connection is established when needed
+async function establishConnection() {
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    throw error;
   }
-
-  return startServerAndCreateLambdaHandler(
-    serverInstance,
-    handlers.createAPIGatewayProxyEventV2RequestHandler(),
-  );
 }
+
+establishConnection();
+const schema = createSchema();
+const server = new ApolloServer({
+  schema,
+  schemaDirectives: { paginate, flatten },
+  context: async () => {
+    await establishConnection();
+    return context();
+  },
+  playground:
+    process.env.NODE_ENV !== "production"
+      ? {
+          endpoint: "/graphql",
+        }
+      : false,
+});
+
+export const graphqlHandler = startServerAndCreateLambdaHandler(
+  server,
+  handlers.createAPIGatewayProxyEventV2RequestHandler(),
+);
