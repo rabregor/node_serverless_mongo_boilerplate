@@ -1,11 +1,11 @@
-import * as users_mutations from "./users/mutations.js";
-import * as users_queries from "./users/queries.js";
+import users_mutations from "./users/mutations.js";
+import users_queries from "./users/queries.js";
 
 export const resolvers = {
   Query: {
-    ...users_queries.default,
+    ...users_queries,
   },
   Mutation: {
-    ...users_mutations.default,
+    ...users_mutations,
   },
 };
