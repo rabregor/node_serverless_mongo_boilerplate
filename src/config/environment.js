@@ -5,10 +5,10 @@ dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;
 
 const awsConfig = {
-  region: "us-east-1",
-  s3: {
-    bucketName: process.env.AWS_BUCKET_NAME,
-  },
+  accessKeyId: process.env.CLI_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.CLI_AWS_SECRET_ACCESS_KEY,
+  region: process.env.CLI_AWS_REGION,
+  s3Bucket: process.env.CLI_AWS_S3_BUCKET,
 };
 
 const env = {

@@ -9,7 +9,7 @@ async function gatherFiles(dir) {
 
   const files = entries
     .filter((entry) => entry.isFile() && !entry.name.endsWith("index.js"))
-    .map((entry) => join(dir, entry.name));
+    .map((entry) => join(dir, entry.name).replace(/\//g, "\\")); // Cambios aqui
 
   const folders = entries.filter((entry) => entry.isDirectory());
 
@@ -30,24 +30,42 @@ async function generateResolvers() {
     Mutation: [],
   };
 
-  for (const file of allFiles) {
-    const relativePath = `./${file.substring(resolversDir.length + 1)}`;
-    const pathParts = file.split("/");
-    const moduleName = pathParts.slice(-2).join("_").replace(".js", ""); // Uses the last two parts of the path for uniqueness
+  const typeResolvers = {};
 
-    imports.push(`import * as ${moduleName} from '${relativePath}';`);
+  for (const file of allFiles) {
+    const relativePath = `./${file
+      .substring(resolversDir.length + 1)
+      .replace(/\\/g, "/")}`; // Cambios aqui
+    const pathParts = file.split("\\"); // Cambios aqui
+    const moduleName = pathParts.slice(-2).join("_").replace(".js", "");
+
+    imports.push(`import ${moduleName} from '${relativePath}';`);
 
     if (file.includes("queries")) {
-      exports.Query.push(`...${moduleName}.default`);
+      exports.Query.push(`...${moduleName}`);
     } else if (file.includes("mutations")) {
-      exports.Mutation.push(`...${moduleName}.default`);
+      exports.Mutation.push(`...${moduleName}`);
+    } else if (file.endsWith("fields.js")) {
+      const typeName = pathParts[pathParts.length - 2];
+      if (!typeResolvers[typeName]) {
+        typeResolvers[typeName] = [];
+      }
+      typeResolvers[typeName].push(`...${moduleName}`);
     }
   }
+
+  const typesExport = Object.entries(typeResolvers)
+    .map(
+      ([typeName, resolvers]) =>
+        `${typeName}: {\n    ${resolvers.join(",\n    ")}\n  }`,
+    )
+    .join(",\n  ");
 
   const content = `
 ${imports.join("\n")}
 
 export const resolvers = {
+  ${typesExport ? `${typesExport},\n  ` : ""}
   Query: {
     ${exports.Query.join(",\n    ")}
   },

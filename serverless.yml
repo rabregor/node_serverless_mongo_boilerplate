@@ -1,4 +1,4 @@
-service: NiPS-backend
+service: pdfs-translators-backend
 
 provider:
   name: aws
@@ -11,17 +11,17 @@ provider:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::nips-backend/*"
-    - Effect: "Allow"
-      Action:
-        - "dynamodb:*"
-      Resource: "*"
+      Resource: "arn:aws:s3:::pdfs-translator-misc/*"
   environment:
     SECRET_KEY: ${env.SECRET_KEY}
     AWS_BUCKET_NAME: ${env.AWS_BUCKET_NAME}
     MONGO_URI: ${env.MONGO_URI}
     NODE_ENV: ${env.NODE_ENV}
-    
+    CLI_AWS_ACCESS_KEY_ID: ${env.CLI_AWS_ACCESS_KEY_ID}
+    CLI_AWS_SECRET_ACCESS_KEY: ${env.CLI_AWS_SECRET_ACCESS_KEY}
+    CLI_AWS_REGION: ${env.CLI_AWS_REGION}
+    CLI_AWS_S3_BUCKET: ${env.CLI_AWS_S3_BUCKET}
+     
 custom:
   serverless-offline:
     httpPort: 4000

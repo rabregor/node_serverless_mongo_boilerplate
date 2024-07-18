@@ -22,15 +22,7 @@ const User = new Schema(
       type: String,
       enum: ["client", "admin"],
       required: true,
-    },
-    isEnterprise: {
-      type: Boolean,
-      required: true,
-    },
-    organization: {
-      type: String,
-      required: true,
-    },
+    }
   },
   { timestamps: true, collection: "User" },
 );

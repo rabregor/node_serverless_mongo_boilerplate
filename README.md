@@ -1,4 +1,4 @@
-# NIPs Backend
+# Serverless Backend
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![Node Version](https://img.shields.io/badge/node-16.14.0-green)
 
@@ -36,13 +36,13 @@ This is the serverless backend for NIPs, a file management service. The service 
 1. Clone the repository
 
    ```bash
-   git clone https://github.com/your-repo/nips-backend.git
+   git clone <repo_url>
    ```
 
 2. Navigate to the project directory
 
    ```bash
-   cd nips-backend
+   cd repo
    ```
 
 3. Install dependencies using Yarn
@@ -73,32 +73,6 @@ All endpoints, except the login (`/authenticate`), require an `Authorization` he
 Authorization: Bearer <token>
 ```
 
-### Organizations
-
-#### Create a New Organization
-
-- **URL**: `/organization`
-- **Method**: `POST`
-- **Headers**: `Authorization`
-
-**Sample Request Body**
-
-```json
-{
-  // Your fields here
-}
-```
-
-**Sample Success Response**
-
-```json
-{
-  "message": "Created!",
-  "organization": {
-    // Organization data here
-  }
-}
-```
 
 ### Users
 
@@ -144,196 +118,6 @@ Authorization: Bearer <token>
 {
   "email": "user@example.com",
   "password": "password123"
-}
-```
-
-### Folders
-
-#### Get All Folders
-
-- **URL**: `/folders`
-- **Method**: `GET`
-- **Headers**: `Authorization`
-
-**Sample Success Response**
-
-```json
-{
-  "message": "Success!",
-  "folders": [
-    // Folders data here
-  ]
-}
-```
-
-#### Create a New Folder
-
-- **URL**: `/folders`
-- **Method**: `POST`
-- **Headers**: `Authorization`
-
-**Sample Request Body**
-
-```json
-{
-  "folder": {
-    "name": "DropIN_2020",
-    "organization": "d4aa4467-b948-4408-a5e1-55562e56b844"
-  },
-  "requirements": [
-    {
-      "requirement": "Foto ine",
-      "status": "created",
-      "file": "file1"
-    },
-    {
-      "requirement": "Pdf ficha técnica",
-      "status": "created",
-      "file": "file2"
-    }
-  ]
-}
-```
-
-#### Edit a Folder
-
-- **URL**: `/folders/{organization}/{id}`
-- **Method**: `PUT`
-- **Headers**: `Authorization`
-
-**Sample Request Body**
-
-```json
-{
-  "folder": "folderId123",
-  "requirement": "First Requirement",
-  "status": "Complete",
-  "file": "newFileId",
-  "organization": "org1"
-}
-```
-
-### Requirements
-
-#### Get All Requirements
-
-- **URL**: `/requirements`
-- **Method**: `GET`
-- **Headers**: `Authorization`
-
-**Sample Success Response**
-
-```json
-{
-  "message": "Success!",
-  "requirements": [
-    // Requirements data here
-  ]
-}
-```
-
-#### Create a New Requirement
-
-- **URL**: `/requirements`
-- **Method**: `POST`
-- **Headers**: `Authorization`
-
-**Sample Request Body**
-
-```json
-{
-  "requirement": "Foto ine",
-  "status": "created",
-  "file": "file1",
-  "organization": "org1"
-}
-```
-
-**Sample Success Response**
-
-```json
-{
-  "message": "Created!",
-  "requirement": {
-    // Requirement data here
-  }
-}
-```
-
-#### Edit a Requirement
-
-- **URL**: `/requirements/{organization}/{id}`
-- **Method**: `PUT`
-- **Headers**: `Authorization`
-
-**Sample Request Body**
-
-```json
-{
-  "requirement": "Foto ine",
-  "status": "Complete",
-  "file": "newFileId",
-  "organization": "org1"
-}
-```
-
-### Files
-
-#### Get All Files
-
-- **URL**: `/files`
-- **Method**: `GET`
-- **Headers**: `Authorization`
-
-**Sample Success Response**
-
-```json
-{
-  "message": "Success!",
-  "files": [
-    // Files data here
-  ]
-}
-```
-
-#### Create a New File
-
-- **URL**: `/files`
-- **Method**: `POST`
-- **Headers**: `Authorization`
-
-**Sample Request Body**
-
-```json
-{
-  "file": "fileData",
-  "organization": "org1"
-}
-```
-
-**Sample Success Response**
-
-```json
-{
-  "message": "Created!",
-  "file": {
-    // File data here
-  }
-}
-```
-
-#### Edit a File
-
-- **URL**: `/files/{organization}/{id}`
-- **Method**: `PUT`
-- **Headers**: `Authorization`
-
-**Sample Request Body**
-
-```json
-{
-  "file": "newFileData",
-  "organization": "org1"
 }
 ```
 
