@@ -28,6 +28,10 @@ const server = new ApolloServer({
           endpoint: "/graphql",
         }
       : false,
+  cors: {
+    origin: "http://localhost:3000", // Replace with your actual localhost origin
+    credentials: true,
+  },
 });
 
 export const graphqlHandler = startServerAndCreateLambdaHandler(

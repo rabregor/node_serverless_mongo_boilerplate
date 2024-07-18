@@ -32,7 +32,7 @@ const responses = Object.freeze({
     body: JSON.stringify({ message: `Bad Request: ${field} is required` }),
   }),
   success: (modelType, model, args = {}) => {
-    const resModel = model.toJSON ? model.toJSON() : model;
+    const resModel = model?.toJSON ? model.toJSON() : model;
 
     return {
       statusCode: 200,
